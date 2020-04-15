@@ -1,26 +1,58 @@
-import React from 'react';
-import logo from './logo.svg';
+import React, { Component } from 'react';
+import { ThemeProvider } from '@material-ui/styles';
+import theme from './theme';
+import { Router } from 'react-router-dom';
+import { createBrowserHistory } from 'history';
+import Routes from './Routes';
 import './App.css';
+import { connect } from 'react-redux';
+import 'react-perfect-scrollbar/dist/css/styles.css';
+//import './assets/index.scss';
+import Loading from 'components/Loading'
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+import {
+  SET_FETCHING,  
+} from "./constants";
+
+const browserHistory = createBrowserHistory();
+
+
+class App extends Component{
+
+  constructor(props){
+    super(props)
+    Window.Store.dispatch({type:SET_FETCHING,payload:false})  
+  }
+
+  //shouldComponentUpdate(nextProps, nextState) {
+    //console.log("should update");
+    //return nextProps === this.props
+  //}
+
+  render(){
+    return (
+      <ThemeProvider theme={theme}>
+        {
+          this.props.appState.loading ?
+          <Loading/> 
+          :false
+        }  
+          <Router history={browserHistory}>
+            <Routes />
+          </Router>
+        
+      </ThemeProvider>    
+    );  
+  }
+
+  
 }
 
-export default App;
+const mapStateToProps = state => {
+  return {
+    appState: state.app,  
+  };
+}
+
+
+export default  connect(mapStateToProps, null)(App);
