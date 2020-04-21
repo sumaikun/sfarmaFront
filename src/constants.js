@@ -27,6 +27,11 @@ export const REMOVE_PRODUCT = "REMOVE_PRODUCT";
 
 export const SELECT_PRODUCT = "SELECT_PRODUCT";
 
+// ---------------  Global objects types ---------------------
+
+export const SET_LABORATORIES = "SET_LABORATORIES"
+
+
 
 
 

@@ -4,7 +4,8 @@ import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 import Link from '@material-ui/core/Link';
-
+import { connect } from 'react-redux';
+import './heart.css';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -18,11 +19,12 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-export default function StickyFooter() {
+function StickyFooter(props) {
+  
   const classes = useStyles();
 
   return (
-    <div className={classes.root}>
+    <div className={classes.root} style={{display: props.appState.loading ? "none":"block"}} >
       <CssBaseline />
       <Container component="main" className={classes.main} maxWidth="sm">
         
@@ -30,9 +32,24 @@ export default function StickyFooter() {
           Bienvenido a sistema de gestión de medicamentos
         </Typography>
 
+        <div id="heartContainer">
+          <div class="intheair">
+            <div class="heart"> </div>
+          </div>
+        </div>        
+
         
       </Container>
       
     </div>
   );
 }
+
+const mapStateToProps = state => {
+ 
+  return {
+    appState: state.app,   
+  };
+}
+
+export default  connect(mapStateToProps, {} )(StickyFooter);

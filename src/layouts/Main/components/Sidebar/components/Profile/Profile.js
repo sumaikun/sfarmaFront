@@ -5,6 +5,8 @@ import PropTypes from 'prop-types';
 import { makeStyles } from '@material-ui/styles';
 import { Avatar, Typography } from '@material-ui/core';
 
+import { connect } from 'react-redux';
+
 const useStyles = makeStyles(theme => ({
   root: {
     display: 'flex',
@@ -27,9 +29,9 @@ const Profile = props => {
   const classes = useStyles();
 
   const user = {
-    name: 'Jesús Vega',
-    avatar: '/images/avatars/avatar_11.png',
-    bio: 'Developer'
+    name: props.authState.user.name,
+    avatar: process.env.REACT_APP_SERVE_IMAGE+props.authState.user.picture,
+    bio: props.authState.user.role
   };
 
   return (
@@ -40,9 +42,8 @@ const Profile = props => {
       <Avatar
         alt="Person"
         className={classes.avatar}
-        component={RouterLink}
         src={user.avatar}
-        to="/settings"
+        
       />
       <Typography
         className={classes.name}
@@ -59,4 +60,12 @@ Profile.propTypes = {
   className: PropTypes.string
 };
 
-export default Profile;
+const mapStateToProps = state => {
+ 
+  return {
+    authState: state.auth,  
+  };
+}
+
+
+export default  connect(mapStateToProps, null )(Profile);

@@ -21,7 +21,8 @@ class App extends Component{
 
   constructor(props){
     super(props)
-    Window.Store.dispatch({type:SET_FETCHING,payload:false})  
+    Window.Store.dispatch({type:SET_FETCHING,payload:false})
+    Window.StopAutoFetching = false  
   }
 
   //shouldComponentUpdate(nextProps, nextState) {

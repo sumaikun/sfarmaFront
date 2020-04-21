@@ -6,7 +6,8 @@ import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import { ProductsToolbar, ProductCard } from './components';
 import { connect } from 'react-redux';
-
+import { useLocation } from "react-router-dom";
+import Swal from 'sweetalert2'
 import { getProducts , getProduct } from 'actions/products';
 
 const useStyles = theme => ({
@@ -35,16 +36,45 @@ class ProductList extends Component{
   }
 
   componentDidMount(){
-    
-    this.props.getProducts((success,error)=>{
-      this.setState({
-        ...this.state,
-        products:this.props.productsState.products,
-        selectedProduct:null,
-        page:0,
-        rowsPerPage:6
+
+    if(this.props.history.location.state == null)
+    {
+      this.props.getProducts((success,error)=>{
+        if(success)
+        {
+          this.setState({
+            ...this.state,
+            products:this.props.productsState.products,
+            selectedProduct:null,
+            page:0,
+            rowsPerPage:6
+          })
+        }
+        
       })
-    })
+    }
+    else{
+      if(this.props.history.location.state.mode === "filterNew")
+      {
+        console.log("condition filtered")
+        //const laboratory = this.props.history.location.state.data
+        
+        this.props.getProducts((success,error)=>{
+          if(success)
+          {
+            this.setState({
+              ...this.state,
+              products:this.props.productsState.products.filter( data => data.laboratory === this.props.history.location.state.data && data.state != "sended"   ),
+              selectedProduct:null,
+              page:0,
+              rowsPerPage:6
+            })
+          }
+        })  
+
+        
+      }
+    }  
 
 
     
@@ -59,6 +89,10 @@ class ProductList extends Component{
     this.rightPagination = this.rightPagination.bind(this)
 
     this.csvExport = this.csvExport.bind(this)
+
+
+    this.cancelButton = this.cancelButton.bind(this)
+    this.approveButton = this.approveButton.bind(this)
   
   }
 
@@ -94,22 +128,99 @@ class ProductList extends Component{
   createButton(){
     console.log("create Button");
     this.props.getProduct(null)
-    this.props.history.push('/products/form')
+    this.props.history.push({
+      pathname: '/products/form',
+      state: { mode:null }
+    })
   }
 
-  editButton(id){
+  editButton(id,mode = null){
     console.log("edit Button",id);
     let self = this
     this.props.getProduct(id,(success, error)=>{
       if(success)
       {
-        self.props.history.push('/products/form')
+        self.props.history.push({
+          pathname: '/products/form',
+          state: { mode }
+        })
       }
     })
   }
 
-  deleteButton(id){
+  cancelButton(data){
+    Swal.fire({
+      title: '¿Estas seguro de cancelar este producto?',
+      text: "Esta acción no podra deshacerse",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3f51b5',
+      cancelButtonColor: '#d33',
+      confirmButtonText: '¡Si, adelante!',
+      cancelButtonText: 'No'
+    }).then((result) => {
+      if (result.value) {
+        
+      }
+    })
+  }
+
+  approveButton(data){
+    console.log("create Button");
+    Swal.fire({
+      title: '¿Estas seguro de aprobar y enviar a prestashop la información?',
+      text: "Esta acción no podra deshacerse",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#000076',
+      cancelButtonColor: '#d33',
+      confirmButtonText: '¡Si, adelante!',
+      cancelButtonText: 'No'
+    }).then( async (result) => {
+      if (result.value) {
+        const { value: formValues } = await Swal.fire({
+          confirmButtonColor: '#000076',
+          title: 'Información adicional',
+          html:
+            '<input id="swal-input1" placeholder="referencia" class="swal2-input">' +
+            '<input id="swal-input2" placeholder="precio sin iva" class="swal2-input">'+
+            '<input id="swal-input3" placeholder="precio con iva" class="swal2-input">'+
+            '<input id="swal-input4" placeholder="cantidad" class="swal2-input">',
+          focusConfirm: false,
+          preConfirm: () => {
+            return [
+              document.getElementById('swal-input1').value,
+              document.getElementById('swal-input2').value,
+              document.getElementById('swal-input3').value,
+              document.getElementById('swal-input4').value
+            ]
+          }
+        })
+        
+        if (formValues) {
+          Swal.fire(JSON.stringify(formValues))
+        }
+      }
+    })
+  }
+
+  deleteButton(data){
     console.log("delete Button");
+
+    Swal.fire({
+      title: '¿Estas seguro de eliminar este producto?',
+      text: "Esta acción no podra deshacerse",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3f51b5',
+      cancelButtonColor: '#d33',
+      confirmButtonText: '¡Si, adelante!',
+      cancelButtonText: 'No'
+    }).then((result) => {
+      if (result.value) {
+        
+      }
+    })
   }
 
   filteredProducts(data){
@@ -180,7 +291,7 @@ class ProductList extends Component{
             container
             spacing={3}
           >
-            {this.state.products.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map(product => (
+            { this.state.products.length > 0 ? this.state.products.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map(product => (
               <Grid
                 item
                 key={product.id}
@@ -191,9 +302,12 @@ class ProductList extends Component{
                 <ProductCard
                 editButton={this.editButton}
                 deleteButton={this.deleteButton}
+                cancelButton={this.cancelButton}
+                approveButton={this.approveButton}
+                user={this.props.authState.user}
                 product={product} />
               </Grid>
-            ))}
+            )) : false }
           </Grid>
         </div>
         <div className={classes.pagination}>
@@ -215,7 +329,8 @@ class ProductList extends Component{
 const mapStateToProps = state => {
  
   return {
-    productsState: state.products,  
+    productsState: state.products,
+    authState: state.auth  
   };
 }
 

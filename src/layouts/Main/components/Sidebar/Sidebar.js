@@ -56,7 +56,7 @@ const Sidebar = props => {
     }).then((result) => {
       if (result.value) {
         props.logoutUser();
-        window.location.reload();
+        window.location.replace("/Home");
       }
     })
    
@@ -82,6 +82,11 @@ const Sidebar = props => {
       icon: <Lock/>
     }
   ];
+
+  if(props.authState.user.role != "admin")
+  {
+    delete pages[0]
+  }
 
   return (
     <Drawer

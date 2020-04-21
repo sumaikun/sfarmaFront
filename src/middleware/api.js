@@ -23,8 +23,12 @@ instance.interceptors.request.use(function (config) {
 
   //console.log("global store",Window.Store.getState().auth); 
 
-  Window.Store.dispatch({type:SET_FETCHING,payload:true})
-  
+  if(Window.StopAutoFetching === false)  
+  {
+    Window.Store.dispatch({type:SET_FETCHING,payload:true})
+    console.log("global fetching on",Window.StopAutoFetching)
+  }
+
   const { token } = Window.Store.getState().auth
   // eslint-disable-next-line no-console
   //console.log("token", token)
@@ -46,13 +50,21 @@ instance.interceptors.request.use(function (config) {
 })
 
 instance.interceptors.response.use((response) => {
-   
-     Window.Store.dispatch({type:SET_FETCHING,payload:false})
+
+     if(Window.StopAutoFetching === false)  
+     {
+       console.log("global fetching off")
+       Window.Store.dispatch({type:SET_FETCHING,payload:false})
+     }
 
      return response;
   }, (error) => {
 
-    Window.Store.dispatch({type:SET_FETCHING,payload:false})
+    if(Window.StopAutoFetching === false)  
+    {
+      console.log("global fetching off") 
+      Window.Store.dispatch({type:SET_FETCHING,payload:false})
+    }
 
     // eslint-disable-next-line no-console
     //console.log(error.config,error.message,error.config.url.includes("auth"));

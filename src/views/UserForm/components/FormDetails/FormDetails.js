@@ -28,11 +28,12 @@ const FormDetails = props => {
 
   console.log("form details props",props)
 
-  const { className, ...rest } = props;
+  const { className,  ...rest } = props;
 
-  const classes = useStyles();
 
- 
+  const [laboratories, setLaboratories ] = useState([]); 
+
+  const classes = useStyles(); 
 
   const handleChange = event => {
 
@@ -55,7 +56,7 @@ const FormDetails = props => {
 
   const [userRoles, setUserRoles ] = useState([]);
 
-  const [laboratories, setLaboratories ] = useState([]);
+  //const [laboratories, setLaboratories ] = useState([]);
   
 
   useEffect(() => {  
@@ -67,15 +68,20 @@ const FormDetails = props => {
 
     const getData = async () => {
       
-      let response = await api.getData("getPrestaShopDistributors") 
+      /*let response = await api.getData("getPrestaShopDistributors") 
       let arrayData = []
       console.log(response.data)
       response.data.forEach( data => arrayData.push({label:data.name,value:data.id}) )
       if(mounted){
           setLaboratories(arrayData)
-      }     
+      }     */
+
+      let arrayData = []
+
+      props.laboratories.forEach( data => arrayData.push({label:data.name,value:data.id}) )
+      setLaboratories(arrayData)
       
-      response = await api.getData("userRoles") 
+      const response = await api.getData("userRoles") 
 
       arrayData = [{label:"",value:""}]
       console.log(response.data)

@@ -10,6 +10,8 @@ import { saveProduct } from 'actions/products';
 
 import { uploadFileToServer } from 'actions/app'
 
+import { useLocation } from "react-router-dom";
+
 import Swal from 'sweetalert2' 
 
 const useStyles = makeStyles(theme => ({
@@ -23,6 +25,7 @@ const useStyles = makeStyles(theme => ({
 const ProductForm = props => {
   const classes = useStyles();
 
+  const location = useLocation();
 
   console.log("props product form",props.productsState.selectedProduct)
 
@@ -69,6 +72,16 @@ const ProductForm = props => {
     if(props.productsState.selectedProduct.id)
     {
       product._id = props.productsState.selectedProduct.id
+    }
+
+    if(props.authState.user.role === "admin" && product.laboratory === "")
+    {
+      return Swal.fire({
+        icon: 'error',
+        title: 'Espera',
+        text: "Debe llenar todos los datos obligatorios para continuar",          
+      })
+
     }
 
     if(product.name === ""  || product.description === "" || product.cateogry === "") 
@@ -152,7 +165,7 @@ const ProductForm = props => {
           xl={12}
           xs={12}
         >        
-          <FormFile  productDetails={values} changeDetails={changeValues} />
+          <FormFile  location={location} productDetails={values} changeDetails={changeValues} />
         </Grid>
         <Grid
           item
@@ -161,7 +174,11 @@ const ProductForm = props => {
           xl={12}
           xs={12}
         >      
-          <FormDetails changeDetails={changeValues} productDetails={values} submitData={submitData}  />
+          <FormDetails changeDetails={changeValues} 
+           location={location}
+           user={props.authState.user}
+           productDetails={values} 
+           laboratories={props.appState.laboratories} submitData={submitData}  />
         </Grid>
       </Grid>
     </div>
@@ -174,6 +191,7 @@ const mapStateToProps = state => {
   return {
     productsState: state.products,
     appState: state.app,   
+    authState: state.auth
   };
 }
 

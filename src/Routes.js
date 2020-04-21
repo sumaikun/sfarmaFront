@@ -39,7 +39,6 @@ const Routes = (props) => {
             component={SignUp}
             exact
             layout={Minimal}
-            authenticated={true}
             path="/signUp"
         />
 

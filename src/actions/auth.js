@@ -33,7 +33,7 @@ export function loginUser(creds,cb = null) {
         //console.log(response)
         // Dispatch the success action
         dispatch(receiveLogin(response.data.user,response.data.token));
-        if(cb) { cb(true,false) }
+        if(cb) { cb(response,false) }
       })
       .catch(err => { console.log("Error: ", err)
         if(cb) { cb(false,err) }

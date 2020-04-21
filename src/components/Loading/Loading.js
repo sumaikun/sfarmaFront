@@ -5,7 +5,8 @@ const styles = {
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
-        height: "-webkit-fill-available"
+        height: "-webkit-fill-available",
+        backgroundColor:"white"
     }
 }
 

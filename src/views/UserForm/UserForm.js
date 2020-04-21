@@ -165,7 +165,8 @@ const UserForm = props => {
           xl={8}
           xs={12}
         >      
-          <FormDetails changeDetails={changeValues} userDetails={values} submitData={submitData}  />
+          <FormDetails changeDetails={changeValues} laboratories={props.appState.laboratories}
+           userDetails={values} submitData={submitData}  />
         </Grid>
       </Grid>
     </div>

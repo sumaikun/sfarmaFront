@@ -39,7 +39,7 @@ const useStyles = makeStyles(theme => ({
 }));
 
 const FormFile = props => {
-  const { className, ...rest } = props;
+  const { className, location, ...rest } = props;
 
   const classes = useStyles();
 
@@ -121,6 +121,7 @@ const FormFile = props => {
             variant="text"
             component="label"
             type="submit"
+            style={{ display: location.state.mode !== "readOnly" ? "block":"none"}}
           >
             Cambiar foto
             <input

@@ -19,6 +19,10 @@ import { connect } from "react-redux";
 
 import { loginUser } from "actions/auth";
 
+import { getLaboratories } from "actions/app";
+
+import { getProducts } from "actions/products"
+
 import Swal from 'sweetalert2'
 
 
@@ -51,6 +55,8 @@ const SignIn = (props) => {
 
   const { history } = props;
 
+  const [click, setClick] = useState(false);
+
   const [formState, setFormState] = useState({    
     values: {} 
   });
@@ -71,14 +77,62 @@ const SignIn = (props) => {
   };
 
   const handleSignIn = event => {
-    
+
     event.preventDefault()
-    console.log("it is time to login")
+
+    if(click != false)
+    {
+      return;
+    }
+    
+    setClick(true)
+
+    Window.StopAutoFetching = true
+
+    event.preventDefault()
+    console.log("it is time to login",Window.StopAutoFetching)
     console.log(formState.values)
 
+    
+
     props.loginUser(formState.values, ( success , error ) =>{
+
       if(success){
-        history.push('/');
+
+        
+        console.log("success login",success)
+
+        setClick(false)
+
+        if(success.data.user.role === "admin")
+        {
+
+          /*props.getProducts(( success , error ) =>{
+            if(success){
+              Window.StopAutoFetching = false
+            }
+          })*/
+          
+          props.getLaboratories(( success , error ) =>{
+            if(success){
+              props.getProducts()
+              history.push('/');
+            }else{
+              Swal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: "Hubo un error consiguiendo la información de prestashop",          
+              })    
+            }
+          })
+        }
+        else{
+          Window.StopAutoFetching = false
+
+        }
+        
+
+        
       }
       if(error){
         
@@ -169,8 +223,17 @@ const SignIn = (props) => {
   );
 }
 
+const mapStateToProps = state => {
+ 
+  return {
+    authState: state.auth,  
+  };
+}
+
 const mapDispatchToProps = {
   loginUser,
+  getLaboratories,
+  getProducts
  };
  
-export default connect(null, mapDispatchToProps)(withRouter(SignIn));
+export default connect( mapStateToProps, mapDispatchToProps )(withRouter(SignIn));

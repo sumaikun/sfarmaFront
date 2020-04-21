@@ -20,6 +20,8 @@ import FormControl from '@material-ui/core/FormControl';
 import FormLabel from '@material-ui/core/FormLabel';
 import  api  from 'middleware/api'
 
+import Autocomplete from '@material-ui/lab/Autocomplete'
+
 const useStyles = makeStyles(() => ({
   root: {}
 }));
@@ -28,7 +30,7 @@ const FormDetails = props => {
 
   console.log("props",props)
 
-  const { className, ...rest } = props;
+  const { className, location, ...rest } = props;
 
   const classes = useStyles(); 
 
@@ -37,6 +39,16 @@ const FormDetails = props => {
     props.changeDetails(event.target.name,event.target.value)
 
   };
+
+  const AutoCompleteChange = (event, values, name) => {
+
+    console.log("autocomplete changed",event,values,name)
+    
+    if(values){
+      props.changeDetails(name,values.value)
+    }
+
+  }
 
   const errors =  new Array(5)
 
@@ -101,6 +113,7 @@ const FormDetails = props => {
     props.submitData(errors)
   }
 
+  const [laboratories, setLaboratories ] = useState([]);
 
   const [ categories, setCategories ] = useState([]);
 
@@ -109,10 +122,15 @@ const FormDetails = props => {
       let mounted = true;
       
       const getData = async () => { 
+
+        let arrayData = []
+
+        props.laboratories.forEach( data => arrayData.push({label:data.name,value:data.id}) )
+        setLaboratories(arrayData)
         
         let response = await api.getData("getPrestaShopProductcategories") 
 
-        let arrayData = [{label:"",value:""}]
+        arrayData = [{label:"",value:""}]
         console.log(response.data)
         response.data.forEach( data => arrayData.push({label:data.name,value:data.id}) )
 
@@ -141,7 +159,7 @@ const FormDetails = props => {
         noValidate
       >
         <CardHeader
-          subheader="Ingresar la información del producto"
+          subheader={ location.state.mode !== "readOnly" ? "Ingresar la información del producto" : "Información"}
           title="Producto"
         />
         <Divider />
@@ -159,6 +177,7 @@ const FormDetails = props => {
                 required
                 value={props.productDetails.name}
                 variant="outlined"
+                disabled={location.state.mode === "readOnly"}
               />
             </Grid>  
             <Grid item md={6} xs={12}>
@@ -172,7 +191,8 @@ const FormDetails = props => {
                 onChange={handleChange}
                 required
                 value={props.productDetails.description}
-                variant="outlined"                
+                variant="outlined"
+                disabled={location.state.mode === "readOnly"}                
               />
               <span style={{display:"absolute", fontSize:"10px", height:"0px"}} >Especifique en una frase el tipo de producto y mencione sus componentes</span>
             </Grid>
@@ -186,6 +206,7 @@ const FormDetails = props => {
                 required
                 value={props.productDetails.externalBoxDesc}
                 variant="outlined"
+                disabled={location.state.mode === "readOnly"}
               />
             </Grid>  
             <Grid item md={6} xs={12}>
@@ -198,7 +219,7 @@ const FormDetails = props => {
                 required
                 value={props.productDetails.internalBoxDesc}
                 variant="outlined"
-                
+                disabled={location.state.mode === "readOnly"}
               />
             </Grid>
 
@@ -212,7 +233,7 @@ const FormDetails = props => {
                 required
                 value={props.productDetails.codeCopidrogas}
                 variant="outlined"
-                
+                disabled={location.state.mode === "readOnly"}
               />
             </Grid>
 
@@ -226,19 +247,32 @@ const FormDetails = props => {
                 required
                 value={props.productDetails.internalManufacturerCode}
                 variant="outlined"
-                
+                disabled={location.state.mode === "readOnly"}
               />
             </Grid>
 
             <Grid item md={6} xs={12}>
               <FormControl component="fieldset">
                 <FormLabel component="legend">Tipo de medicamento:</FormLabel>
-                <RadioGroup aria-label="medicineType" name="medicineType"   onChange={handleChange}>
-                  <FormControlLabel value="VL" control={<Radio />} label="Venta libre" />
-                  <FormControlLabel value="PM" control={<Radio />} label="Prescripción Médica" />
-                  <FormControlLabel value="F" control={<Radio />} label="Fitoterapéuticos" />
-                  <FormControlLabel value="CF" control={<Radio />} label="Cadena de frío" />
-                  <FormControlLabel value="RP" control={<Radio />} label="Maneja regulación de precio" />
+                <RadioGroup aria-label="medicineType" name="medicineType" 
+                  value={props.productDetails.medicineType}
+                  onChange={handleChange}>
+                  
+                  <FormControlLabel value="VL" control={<Radio />} 
+                  disabled={location.state.mode === "readOnly"}  
+                  label="Venta libre" />
+                  <FormControlLabel value="PM" control={<Radio />}
+                  disabled={location.state.mode === "readOnly"}
+                  label="Prescripción Médica" />
+                  <FormControlLabel value="F" control={<Radio />} 
+                  disabled={location.state.mode === "readOnly"}
+                  label="Fitoterapéuticos" />
+                  <FormControlLabel value="CF" control={<Radio />} 
+                  disabled={location.state.mode === "readOnly"}
+                  label="Cadena de frío" />
+                  <FormControlLabel value="RP" control={<Radio />} 
+                  disabled={location.state.mode === "readOnly"}
+                  label="Maneja regulación de precio" />
                  
                 </RadioGroup>
               </FormControl>
@@ -254,23 +288,29 @@ const FormDetails = props => {
                 required
                 value={props.productDetails.appearance}
                 variant="outlined"
-                
+                disabled={location.state.mode === "readOnly"}
               />
             </Grid>
+            {
+              props.user.role === "admin" ?
 
-            <Grid item md={6} xs={12}>
-              <TextField
-                fullWidth
-                label="Fabricante y/o laboratorio:"
-                margin="dense"
+              <Grid item md={6} xs={12}>
+                <Autocomplete
+                id="combo-box-demo"
+                //searchText="example"
+                options={laboratories}
+                getOptionLabel={(option) => option.label}
+                onChange={(event, values)=>AutoCompleteChange(event, values,"laboratory")}
+                renderInput={(params) => <TextField {...params} label="Laboratorio"
                 name="laboratory"
-                onChange={handleChange}
-                required
-                value={props.productDetails.laboratory}
-                variant="outlined"
-                type="number"
-              />
-            </Grid>  
+                variant="outlined" />}
+                disabled={location.state.mode === "readOnly"} 
+                value={ laboratories.length > 0 ? laboratories[laboratories.findIndex( data => data.value === parseInt(props.productDetails.laboratory) )] :  "" }
+                />              
+              </Grid> :
+                false
+            } 
+
             <Grid item md={6} xs={12}>
               <TextField
                 fullWidth
@@ -280,7 +320,8 @@ const FormDetails = props => {
                 onChange={handleChange}
                 required
                 value={props.productDetails.dimens}
-                variant="outlined"                
+                variant="outlined"  
+                disabled={location.state.mode === "readOnly"}              
               />
               <span style={{display:"absolute", fontSize:"10px", height:"0px"}} >Largo x Ancho x Alto</span>
             </Grid>
@@ -295,6 +336,7 @@ const FormDetails = props => {
                 required
                 value={props.productDetails.weight}
                 variant="outlined"
+                disabled={location.state.mode === "readOnly"}
               />
             </Grid>  
             <Grid item md={6} xs={12}>
@@ -306,7 +348,8 @@ const FormDetails = props => {
                 onChange={handleChange}
                 required
                 value={props.productDetails.measureUnit}
-                variant="outlined"                
+                variant="outlined"    
+                disabled={location.state.mode === "readOnly"}            
               />
               <span style={{display:"absolute", fontSize:"10px", height:"0px"}} >Ml, Mg, g, etc.</span>
             </Grid>
@@ -321,6 +364,7 @@ const FormDetails = props => {
                 required
                 value={props.productDetails.amountSized}
                 variant="outlined"
+                disabled={location.state.mode === "readOnly"}
               />
             </Grid>  
             <Grid item md={6} xs={12}>
@@ -336,7 +380,8 @@ const FormDetails = props => {
                 value={props.productDetails.indications}
                 variant="outlined"
                 multiline
-                rows={3}                
+                rows={3}   
+                disabled={location.state.mode === "readOnly"}             
               />           
             </Grid>
             <Grid item md={6} xs={12}>
@@ -352,7 +397,8 @@ const FormDetails = props => {
                 value={props.productDetails.contraIndications}
                 variant="outlined"
                 multiline
-                rows={3}                
+                rows={3}      
+                disabled={location.state.mode === "readOnly"}          
               />           
             </Grid>
             <Grid item md={6} xs={12}>
@@ -368,7 +414,8 @@ const FormDetails = props => {
                 value={props.productDetails.precautions}
                 variant="outlined"
                 multiline
-                rows={3}                
+                rows={3}      
+                disabled={location.state.mode === "readOnly"}          
               />           
             </Grid>
             <Grid item md={6} xs={12}>
@@ -383,6 +430,7 @@ const FormDetails = props => {
                 required
                 value={props.productDetails.administrationWay}
                 variant="outlined"
+                disabled={location.state.mode === "readOnly"}
               />
             </Grid>
 
@@ -398,6 +446,8 @@ const FormDetails = props => {
                 // eslint-disable-next-line react/jsx-sort-props
                 SelectProps={{ native: true }}               
                 variant="outlined"
+                disabled={location.state.mode === "readOnly"}
+                value={props.productDetails.category}
               >
                 {categories.map(option => (
                   <option
@@ -418,6 +468,7 @@ const FormDetails = props => {
             color="primary"
             variant="contained"
             onClick={saveUser}
+            style={{ display: location.state.mode !== "readOnly" ? "block":"none"}}
           >
             Guardar
           </Button>

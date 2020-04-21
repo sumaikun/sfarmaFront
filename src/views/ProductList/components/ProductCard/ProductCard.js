@@ -16,6 +16,10 @@ import CreateIcon from '@material-ui/icons/Create';
 
 import DeleteIcon from '@material-ui/icons/Delete';
 
+import CheckIcon from '@material-ui/icons/Check';
+
+import CancelIcon from '@material-ui/icons/Cancel';
+
 import { getInitials } from 'helpers';
 
 const useStyles = makeStyles(theme => ({
@@ -34,7 +38,7 @@ const useStyles = makeStyles(theme => ({
     marginLeft: 'auto',
     marginRight: 'auto',
     height: 300,
-    width: 300,
+    width: 350,
     flexShrink: 0,
     flexGrow: 0
   },
@@ -55,6 +59,8 @@ const useStyles = makeStyles(theme => ({
 const ProductCard = props => {
   const { className, product, ...rest } = props;
 
+  console.log("props in card",props)
+
   const classes = useStyles();
 
   return (
@@ -68,6 +74,10 @@ const ProductCard = props => {
             className={classes.avatar}
             src={process.env.REACT_APP_SERVE_IMAGE+product.picture}
             variant="rounded"
+            onClick={()=>{
+              console.log("product clicked")
+              props.editButton(product._id,"readOnly")
+            }}
           >
             {getInitials(product.name)}
           </Avatar>
@@ -99,6 +109,7 @@ const ProductCard = props => {
             onClick={()=>{
               props.editButton(product._id)
             }}
+            style={{display: props.user.role === "admin" || product.user === props.user._id  ? "block":"none"}}
           >
             <CreateIcon className={classes.statsIcon} />
             <Typography
@@ -111,20 +122,67 @@ const ProductCard = props => {
           <Grid
             className={classes.statsItem}
             item
+            style={{display: props.user.role === "admin" || product.user === props.user._id  ? "block":"none"}}
+            onClick={()=>{
+              console.log("product clicked to delete")
+              props.deleteButton(product)
+            }}
           >
             <DeleteIcon className={classes.statsIcon} />
             <Typography
               display="inline"
-              variant="body2"
-              onClick={()=>{
-                props.deleteButton(product._id)
-              }}
+              variant="body2"             
             >
               Eliminar
             </Typography>
           </Grid>
+
+          <Grid
+            className={classes.statsItem}
+            item
+            onClick={()=>{
+              props.approveButton(product)
+            }}
+            style={{display: props.user.role === "admin"  ? "block":"none"}}
+          >
+            <CheckIcon className={classes.statsIcon} />
+            <Typography
+              display="inline"
+              variant="body2"
+            >
+              Aprobar
+            </Typography>
+          </Grid>
+          <Grid
+            className={classes.statsItem}
+            item
+            style={{display: props.user.role === "admin"  ? "block":"none"}}
+            onClick={()=>{
+              props.cancelButton(product)
+            }}
+          >
+            <CancelIcon className={classes.statsIcon} />
+            <Typography
+              display="inline"
+              variant="body2"              
+            >
+              Rechazar
+            </Typography>
+          </Grid>   
+
         </Grid>
       </CardActions>
+      <Divider />
+        <CardActions style={{display:"flex",justifyContent:"center"
+        ,backgroundColor:"#000076"
+        ,color:"white"
+        ,display: product.state === "sended"  ? "block":"none"}} >
+          <Grid>
+          <Typography> 
+            Transferido
+          </Typography>            
+          </Grid>      
+        </CardActions>       
     </Card>
   );
 };
