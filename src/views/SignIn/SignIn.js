@@ -104,6 +104,8 @@ const SignIn = (props) => {
 
         setClick(false)
 
+        Window.StopAutoFetching = false
+
         if(success.data.user.role === "admin")
         {
 
