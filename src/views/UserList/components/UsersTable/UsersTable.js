@@ -88,6 +88,7 @@ const UsersTable = props => {
                   <TableCell>Correo</TableCell>
                   <TableCell>Rol</TableCell>
                   <TableCell>Laboratorio</TableCell>
+                  <TableCell>Estado</TableCell>
                   <TableCell>fecha de registro</TableCell>
                 </TableRow>
               </TableHead>
@@ -125,6 +126,7 @@ const UsersTable = props => {
                       {user.role}
                     </TableCell>
                     <TableCell>{user.laboratory}</TableCell>
+                    <TableCell>{user.state}</TableCell>
                     <TableCell>
                       {/* moment(user.date).format('DD/MM/YYYY') */}
                       { user.date.split(" ")[0] }

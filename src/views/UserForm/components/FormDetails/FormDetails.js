@@ -56,6 +56,8 @@ const FormDetails = props => {
 
   const [userRoles, setUserRoles ] = useState([]);
 
+  const [userStates, setUserStates ] = useState([]);
+
   //const [laboratories, setLaboratories ] = useState([]);
   
 
@@ -88,7 +90,10 @@ const FormDetails = props => {
       response.data.forEach( data => arrayData.push({label:data,value:data}) )
       if(mounted){
         setUserRoles(arrayData)
-      } 
+      }
+      
+      setUserStates( [ {label:"",value:""}, {label:"Pendiente",value:"pending"}, {label:"Activo",value:"active"} ] )
+      
     }
 
     
@@ -272,6 +277,32 @@ const FormDetails = props => {
                 variant="outlined"
               >
                 {userRoles.map(option => (
+                  <option
+                    key={option.value}
+                    value={option.value}
+                  >
+                    {option.label}
+                  </option>
+                ))}
+              </TextField>
+            </Grid>
+
+            <Grid item md={6} xs={12}>
+              <TextField
+                fullWidth
+                label="Estado"
+                margin="dense"
+                name="role"
+                onChange={handleChange}
+                required
+                select
+                // eslint-disable-next-line react/jsx-sort-props
+                SelectProps={{ native: true }}
+                InputLabelProps={{ shrink: !!props.userDetails.state }}
+                value={props.userDetails.state}  
+                variant="outlined"
+              >
+                {userStates.map(option => (
                   <option
                     key={option.value}
                     value={option.value}

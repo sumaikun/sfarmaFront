@@ -39,6 +39,7 @@ const UserForm = props => {
     picture: props.usersState.selectedUser.picture ? props.usersState.selectedUser.picture : null,
     password: '',
     confirmPassword: '',
+    state: props.usersState.selectedUser.state,
     file: null
   });
 

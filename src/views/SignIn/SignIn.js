@@ -91,7 +91,7 @@ const SignIn = (props) => {
 
     event.preventDefault()
     console.log("it is time to login",Window.StopAutoFetching)
-    console.log(formState.values)
+    //console.log(formState.values)
 
     
 
@@ -193,10 +193,11 @@ const SignIn = (props) => {
             autoComplete="current-password"
             onChange={handleChange}
           />
+          { /*
           <FormControlLabel
             control={<Checkbox value="remember" color="primary" />}
             label="Recuerdame"
-          />
+          />*/}
           <Button
             type="submit"
             fullWidth
@@ -208,9 +209,9 @@ const SignIn = (props) => {
           </Button>
           <Grid container>
             <Grid item xs>
-              <Link href="#" variant="body2">
+              { /*<Link href="#" variant="body2">
                 ¿ Olvidaste la contraseña ?
-              </Link>
+               </Link>*/ } 
             </Grid>
             <Grid item>
               <Link href="#" variant="body2" onClick={ () => props.history.push("/signUp") }>
