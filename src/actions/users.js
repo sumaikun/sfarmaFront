@@ -96,17 +96,19 @@ import {
   }
   
 
-  export function deleteUser(user) {
+  export function deleteUser(user,cb = null) {
   
     return dispatch => {
       return api.deleteData("users/"+user.id)
         .then(( response ) => {
 
-          dispatch(removeUser(user));          
+          dispatch(removeUser(user));   
+          
+          if(cb) { cb(true,false) }
         
         })
         .catch(err => { console.log("Error: ", err)
-           
+          if(cb) { cb(false,true) }
         });
     }
   }

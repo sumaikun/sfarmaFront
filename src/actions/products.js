@@ -96,17 +96,19 @@ import {
   }
   
 
-  export function deleteProduct(user) {
+  export function deleteProduct(product,cb = null) {
   
     return dispatch => {
-      return api.deleteData("products/"+user.id)
+      return api.deleteData("products/"+product._id)
         .then(( response ) => {
 
-          dispatch(removeProduct(user));          
+          dispatch(removeProduct(product));   
+          
+          if(cb) { cb(true,false) }
         
         })
         .catch(err => { console.log("Error: ", err)
-           
+          if(cb) { cb(false,true) }
         });
     }
   }

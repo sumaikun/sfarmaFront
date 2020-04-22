@@ -8,7 +8,8 @@ import { ProductsToolbar, ProductCard } from './components';
 import { connect } from 'react-redux';
 import { useLocation } from "react-router-dom";
 import Swal from 'sweetalert2'
-import { getProducts , getProduct } from 'actions/products';
+import { getProducts , getProduct, deleteProduct } from 'actions/products';
+import { createProductPrestashop } from 'actions/app'
 
 const useStyles = theme => ({
   root: {
@@ -35,7 +36,33 @@ class ProductList extends Component{
     }   
   }
 
-  componentDidMount(){
+  componentDidMount(){   
+
+
+    
+    this.createButton = this.createButton.bind(this)
+    this.editButton = this.editButton.bind(this)
+    this.deleteButton = this.deleteButton.bind(this)
+    this.filteredProducts = this.filteredProducts.bind(this)
+    this.addSelectedProduct = this.addSelectedProduct.bind(this)
+
+
+    this.leftPagination = this.leftPagination.bind(this)
+    this.rightPagination = this.rightPagination.bind(this)
+
+    this.csvExport = this.csvExport.bind(this)
+
+
+    this.cancelButton = this.cancelButton.bind(this)
+    this.approveButton = this.approveButton.bind(this)
+
+    this.initializeList = this.initializeList.bind(this)
+
+    this.initializeList()
+  
+  }
+
+  initializeList(){
 
     if(this.props.history.location.state == null)
     {
@@ -75,25 +102,6 @@ class ProductList extends Component{
         
       }
     }  
-
-
-    
-    this.createButton = this.createButton.bind(this)
-    this.editButton = this.editButton.bind(this)
-    this.deleteButton = this.deleteButton.bind(this)
-    this.filteredProducts = this.filteredProducts.bind(this)
-    this.addSelectedProduct = this.addSelectedProduct.bind(this)
-
-
-    this.leftPagination = this.leftPagination.bind(this)
-    this.rightPagination = this.rightPagination.bind(this)
-
-    this.csvExport = this.csvExport.bind(this)
-
-
-    this.cancelButton = this.cancelButton.bind(this)
-    this.approveButton = this.approveButton.bind(this)
-  
   }
 
   addSelectedProduct(id){
@@ -149,6 +157,18 @@ class ProductList extends Component{
   }
 
   cancelButton(data){
+
+    if(data.state === "sended")
+    {
+      return Swal.fire({
+        icon: 'warning',
+        title: 'Alto',
+        text: "No se puede cancelar un producto que ya fue enviado a la tienda virtual",          
+      })
+    }
+
+    const self = this
+
     Swal.fire({
       title: '¿Estas seguro de cancelar este producto?',
       text: "Esta acción no podra deshacerse",
@@ -160,13 +180,25 @@ class ProductList extends Component{
       cancelButtonText: 'No'
     }).then((result) => {
       if (result.value) {
-        
+        self.initializeList()
       }
     })
   }
 
   approveButton(data){
-    console.log("create Button");
+    console.log("approve Button");
+
+    if(data.state === "sended")
+    {
+      return Swal.fire({
+        icon: 'warning',
+        title: 'Alto',
+        text: "No se puede aprovar un producto que ya fue enviado a la tienda virtual",          
+      })
+    }
+
+    const self = this
+
     Swal.fire({
       title: '¿Estas seguro de aprobar y enviar a prestashop la información?',
       text: "Esta acción no podra deshacerse",
@@ -183,29 +215,80 @@ class ProductList extends Component{
           title: 'Información adicional',
           html:
             '<input id="swal-input1" placeholder="referencia" class="swal2-input">' +
-            '<input id="swal-input2" placeholder="precio sin iva" class="swal2-input">'+
-            '<input id="swal-input3" placeholder="precio con iva" class="swal2-input">'+
-            '<input id="swal-input4" placeholder="cantidad" class="swal2-input">',
+            '<input id="swal-input2" placeholder="precio" class="swal2-input">',
           focusConfirm: false,
           preConfirm: () => {
             return [
               document.getElementById('swal-input1').value,
-              document.getElementById('swal-input2').value,
-              document.getElementById('swal-input3').value,
-              document.getElementById('swal-input4').value
+              document.getElementById('swal-input2').value         
             ]
           }
         })
         
         if (formValues) {
-          Swal.fire(JSON.stringify(formValues))
+
+          console.log("formValues",formValues)
+
+          if(formValues[0] == "" || formValues[1] == "")
+          {
+            return Swal.fire({
+              icon: 'error',
+              title: 'Espera',
+              text: "Debes poner los datos de referencia y precio",          
+            })
+          }
+
+          if(data.picture.length == 0)
+          {
+            return Swal.fire({
+              icon: 'error',
+              title: 'Espera',
+              text: "Debes poner una imagen para este proceso",          
+            })
+          }          
+
+          const dataToSend = { product:data._id, reference:formValues[0], price: formValues[1] }
+          console.log("dataToSend",dataToSend) 
+          
+          this.props.createProductPrestashop(dataToSend,(success,error)=>{
+            if(success)
+            {
+              self.initializeList()
+              
+              return Swal.fire({
+                icon: 'success',
+                title: 'Bien',
+                text: "Producto creado en la tienda",          
+              })
+            }
+            if(error)
+            {
+              return Swal.fire({
+                icon: 'error',
+                title: 'Sucedio error',
+                text: "No esta la información completa para realizar este proceso",          
+              })
+            }
+          })  
+
         }
       }
     })
   }
 
   deleteButton(data){
-    console.log("delete Button");
+    console.log("delete Button",data);
+
+    if(data.state === "sended")
+    {
+      return Swal.fire({
+        icon: 'warning',
+        title: 'Alto',
+        text: "No se puede borrar un producto que ya fue enviado a la tienda virtual",          
+      })
+    }
+
+    const self = this
 
     Swal.fire({
       title: '¿Estas seguro de eliminar este producto?',
@@ -218,7 +301,25 @@ class ProductList extends Component{
       cancelButtonText: 'No'
     }).then((result) => {
       if (result.value) {
-        
+        this.props.deleteProduct(data,(success,error)=>{
+          if(success)
+          {
+            self.initializeList()
+            return Swal.fire({
+              icon: 'success',
+              title: 'Bueno',
+              text: "El producto ha sido eliminado",          
+            })
+          }
+          if(error)
+          {
+            return Swal.fire({
+              icon: 'error',
+              title: 'Ooops',
+              text: "No se puede borrar el producto, comprueba la conexión con el servidor",          
+            })
+          }
+        })
       }
     })
   }
@@ -340,7 +441,7 @@ ProductList.propTypes = {
 
 const componentDefinition =  withStyles(useStyles)(ProductList);
 
-export default  connect(mapStateToProps, { getProducts , getProduct } )(componentDefinition);
+export default  connect(mapStateToProps, { getProducts, getProduct, createProductPrestashop, deleteProduct } )(componentDefinition);
 
 
 

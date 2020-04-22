@@ -50,3 +50,20 @@ export function getLaboratories(cb = null) {
         });
     }
   }
+
+  export function createProductPrestashop(data,cb = null) {
+    
+    return dispatch => {
+      // We dispatch requestLogin to kickoff the call to the API
+      //console.log("got dispatch");
+      return api.postData("createPrestaShopProduct",data)
+        .then(( response ) => {                        
+          // Dispatch the success action
+          console.log("create prestashop product", response)
+          if(cb) { cb(true,false) }
+        })
+        .catch(err => { console.log("Error: ", err)
+          if(cb) { cb(false,err) }
+        });
+    }
+  }

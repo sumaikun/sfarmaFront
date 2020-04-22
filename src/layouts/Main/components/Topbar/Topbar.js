@@ -183,7 +183,7 @@ const Topbar = props => {
                       appState.laboratories[appState.laboratories.findIndex( sdata => sdata.id === parseInt(data) )].name+" " : false
                     }  
                     <Badge style={{marginLeft:"10px"}} color="secondary" variant="dot">
-                      <Typography>3</Typography>
+                      <Typography>{notifications.count}</Typography>
                     </Badge>
                     
                   </MenuItem>

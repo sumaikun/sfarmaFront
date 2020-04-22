@@ -7,7 +7,9 @@ import { UsersToolbar, UsersTable } from './components';
 
 import { connect } from 'react-redux';
 
-import { getUsers , getUser } from 'actions/users';
+import { getUsers, getUser, deleteUser } from 'actions/users';
+
+import Swal from 'sweetalert2'
 
 const useStyles = theme => ({
   root: {
@@ -33,11 +35,20 @@ class UserList extends Component{
     this.editButton = this.editButton.bind(this)
     this.deleteButton = this.deleteButton.bind(this)
     this.filteredUsers = this.filteredUsers.bind(this)
-    this.addSelectedUser = this.addSelectedUser.bind(this)   
+    this.addSelectedUser = this.addSelectedUser.bind(this)
+    this.initializeList = this.initializeList.bind(this)
+
   }
 
   componentDidMount(){
     
+    
+    this.initializeList()
+    
+  
+  }
+
+  initializeList(){
     this.props.getUsers((success,error)=>{
       this.setState({
         ...this.state,
@@ -45,9 +56,6 @@ class UserList extends Component{
         selectedUser:null,
       })
     })
-    
-    
-  
   }
 
   addSelectedUser(id){
@@ -79,7 +87,46 @@ class UserList extends Component{
   }
 
   deleteButton(){
-    console.log("delete Button");
+    console.log("delete Button",this.state.selectedUser);
+
+    const self = this
+
+    const data = this.state.selectedUser
+
+    Swal.fire({
+      title: '¿Estas seguro de eliminar este producto?',
+      text: "Esta acción no podra deshacerse",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3f51b5',
+      cancelButtonColor: '#d33',
+      confirmButtonText: '¡Si, adelante!',
+      cancelButtonText: 'No'
+    }).then((result) => {
+      if (result.value) {
+        this.props.deleteUser(data,(success,error)=>{
+          if(success)
+          {
+            self.initializeList()
+            return Swal.fire({
+              icon: 'success',
+              title: 'Bueno',
+              text: "El usuario ha sido eliminado",          
+            })
+          }
+          if(error)
+          {
+            return Swal.fire({
+              icon: 'error',
+              title: 'Ooops',
+              text: "No se puede borrar el usuario, comprueba la conexión con el servidor",          
+            })
+          }
+        })
+      }
+    })
+    
+
   }
 
   filteredUsers(data){
@@ -153,6 +200,6 @@ UserList.propTypes = {
 
 const componentDefinition =  withStyles(useStyles)(UserList);
 
-export default  connect(mapStateToProps, { getUsers , getUser } )(componentDefinition);
+export default  connect(mapStateToProps, { getUsers, getUser, deleteUser } )(componentDefinition);
 
 //export default componentDefinition

@@ -173,12 +173,12 @@ const ProductCard = props => {
         </Grid>
       </CardActions>
       <Divider />
-        <CardActions style={{display:"flex",justifyContent:"center"
+        <CardActions style={{justifyContent:"center"
         ,backgroundColor:"#000076"
         ,color:"white"
-        ,display: product.state === "sended"  ? "block":"none"}} >
+        ,display: product.state === "sended"  ? "flex":"none"}} >
           <Grid>
-          <Typography> 
+          <Typography style={{color:"white",fontWeight:"bold"}} > 
             Transferido
           </Typography>            
           </Grid>      
