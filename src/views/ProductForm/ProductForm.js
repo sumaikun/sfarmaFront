@@ -69,6 +69,9 @@ const ProductForm = props => {
     
     const product = values;
 
+    product.laboratory = String(product.laboratory)
+
+
     if(props.productsState.selectedProduct.id)
     {
       product._id = props.productsState.selectedProduct.id
@@ -84,7 +87,7 @@ const ProductForm = props => {
 
     }
 
-    if(product.name === ""  || product.description === "" || product.cateogry === "") 
+    if(product.name === ""  || product.description === "" || product.category === "") 
     {
       return Swal.fire({
         icon: 'error',
