@@ -18,9 +18,20 @@ import RadioGroup from '@material-ui/core/RadioGroup';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import FormControl from '@material-ui/core/FormControl';
 import FormLabel from '@material-ui/core/FormLabel';
+import Checkbox from '@material-ui/core/Checkbox';
 import  api  from 'middleware/api'
 
 import Autocomplete from '@material-ui/lab/Autocomplete'
+
+import ImageInput from 'components/ImageInput'
+
+import MedicineClassification from 'components/MedicineClassification'
+
+import ExpansionPanel from '@material-ui/core/ExpansionPanel';
+import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
+import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
+import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
+import Typography from '@material-ui/core/Typography';
 
 const useStyles = makeStyles(() => ({
   root: {}
@@ -38,6 +49,12 @@ const FormDetails = props => {
   
     props.changeDetails(event.target.name,event.target.value)
 
+  };
+
+  const [prepak, setPrepak] = React.useState(false);
+
+  const handleCheck= (event) => {
+    setPrepak(event.target.checked);
   };
 
   const AutoCompleteChange = (event, values, name) => {
@@ -138,6 +155,14 @@ const FormDetails = props => {
           setCategories(arrayData)
         }
 
+
+        console.log("prepak condition",props.productDetails.prepakCondition)
+
+        if(props.productDetails.prepakCondition != "" && props.productDetails.prepakCondition != null )
+        {
+          setPrepak(true) 
+        }
+
       }
 
       if(mounted){      
@@ -223,6 +248,7 @@ const FormDetails = props => {
               />
             </Grid>
 
+
             <Grid item md={6} xs={12}>
               <TextField
                 fullWidth
@@ -252,6 +278,20 @@ const FormDetails = props => {
             </Grid>
 
             <Grid item md={6} xs={12}>
+              <TextField
+                fullWidth
+                label="Sub Clasificación de laboratorio"
+                margin="dense"
+                name="subClassification"
+                onChange={handleChange}
+                required
+                value={props.productDetails.subClassification}
+                variant="outlined"
+                disabled={location.state.mode === "readOnly"}
+              />
+            </Grid>
+
+            <Grid item md={6} xs={12}>
               <FormControl component="fieldset">
                 <FormLabel component="legend">Tipo de medicamento:</FormLabel>
                 <RadioGroup aria-label="medicineType" name="medicineType" 
@@ -273,7 +313,10 @@ const FormDetails = props => {
                   <FormControlLabel value="RP" control={<Radio />} 
                   disabled={location.state.mode === "readOnly"}
                   label="Maneja regulación de precio" />
-                 
+                 <FormControlLabel value="CON" control={<Radio />} 
+                  disabled={location.state.mode === "readOnly"}
+                  label="Controlado" />
+
                 </RadioGroup>
               </FormControl>
             </Grid>
@@ -339,6 +382,21 @@ const FormDetails = props => {
                 disabled={location.state.mode === "readOnly"}
               />
             </Grid>  
+
+            <Grid item md={6} xs={12}>
+              <TextField
+                fullWidth
+                label="Cantidad Medida:"
+                margin="dense"
+                name="amountSized"
+                onChange={handleChange}
+                required
+                value={props.productDetails.amountSized}
+                variant="outlined"
+                disabled={location.state.mode === "readOnly"}
+              />
+            </Grid>  
+
             <Grid item md={6} xs={12}>
               <TextField
                 fullWidth
@@ -354,19 +412,6 @@ const FormDetails = props => {
               <span style={{display:"absolute", fontSize:"10px", height:"0px"}} >Ml, Mg, g, etc.</span>
             </Grid>
 
-            <Grid item md={6} xs={12}>
-              <TextField
-                fullWidth
-                label="Cantidad Medida:"
-                margin="dense"
-                name="amountSized"
-                onChange={handleChange}
-                required
-                value={props.productDetails.amountSized}
-                variant="outlined"
-                disabled={location.state.mode === "readOnly"}
-              />
-            </Grid>  
             <Grid item md={6} xs={12}>
               <TextField
                 fullWidth
@@ -458,9 +503,201 @@ const FormDetails = props => {
                   </option>
                 ))}
               </TextField>
-            </Grid>             
-                       
+            </Grid>  
+            
+            <Grid item md={3} xs={6}> 
+                <FormControlLabel
+                control={<Checkbox checked={prepak} onChange={handleCheck} name="checkedA" />}
+                label="¿tiene condición de prepak?" 
+                />
+            </Grid>    
+            
+            {
+              prepak ?  
+
+              <Grid item md={3} xs={6}> 
+                <FormControl component="fieldset">
+                  <FormLabel component="legend"></FormLabel>
+                    <RadioGroup aria-label="prepakCondition" name="prepakCondition" 
+                      value={props.productDetails.prepakCondition}
+                      onChange={handleChange}>
+                      
+                      <FormControlLabel value="KIT" control={<Radio />} 
+                      disabled={location.state.mode === "readOnly"}  
+                      label="Kit" />
+                      <FormControlLabel value="AM" control={<Radio />}
+                      disabled={location.state.mode === "readOnly"}
+                      label="Amarre" />
+                      <FormControlLabel value="OCC" control={<Radio />} 
+                      disabled={location.state.mode === "readOnly"}
+                      label="Oferta cliente consumidor" />
+                      <FormControlLabel value="ODC" control={<Radio />} 
+                      disabled={location.state.mode === "readOnly"}
+                      label="Oferta distribuidora comerciante" />
+                    </RadioGroup>
+                 </FormControl>
+              </Grid>
+              : false   
+
+            }
+
+            {
+              prepak ?  
+
+              <Grid item md={6} xs={12}> 
+                <TextField
+                  fullWidth
+                  label="Código de barras de producto regular:"
+                  margin="dense"
+                  name="barCodeRegular"
+                  onChange={handleChange}
+                  value={props.productDetails.barCodeRegular}
+                  variant="outlined"
+                  disabled={location.state.mode === "readOnly"}
+                />
+              </Grid>
+              : false   
+
+            }
+
+            {
+              prepak ?  
+
+              <Grid item md={6} xs={12}> 
+                <TextField
+                  fullWidth
+                  label="Cantidad por referencia incluida:"
+                  margin="dense"
+                  name="amountByReference"
+                  type="number"
+                  onChange={handleChange}
+                  value={props.productDetails.amountByReference}
+                  variant="outlined"
+                  disabled={location.state.mode === "readOnly"}
+                />
+              </Grid>
+              : false   
+
+            }
+
+            <Grid item md={6} xs={12}>
+              <FormControl component="fieldset">
+                <FormLabel component="legend">Beneficios al cliente:</FormLabel>
+                <RadioGroup aria-label="customerBenefit" name="customerBenefit" 
+                  value={props.productDetails.customerBenefit}
+                  onChange={handleChange}>
+                  
+                  <FormControlLabel value="PL" control={<Radio />} 
+                  disabled={location.state.mode === "readOnly"}  
+                  label="Pague 2 lleve 3" />
+                  <FormControlLabel value="DP" control={<Radio />}
+                  disabled={location.state.mode === "readOnly"}
+                  label="Descuento progresivo" />
+                  <FormControlLabel value="CE" control={<Radio />} 
+                  disabled={location.state.mode === "readOnly"}
+                  label="Condición especial" />
+                  <FormControlLabel value="PR" control={<Radio />} 
+                  disabled={location.state.mode === "readOnly"}
+                  label="Plan Recambio" />
+                  <FormControlLabel value="NA" control={<Radio />} 
+                  disabled={location.state.mode === "readOnly"}
+                  label="No Aplica" />
+                </RadioGroup>
+              </FormControl>
+            </Grid>
+
+            <Grid item md={6} xs={12}>
+              <TextField
+                fullWidth
+                label="Registro Invima:"
+                margin="dense"
+                name="registerInvima"
+                onChange={handleChange}
+                required
+                value={props.productDetails.registerInvima}
+                variant="outlined"
+                disabled={location.state.mode === "readOnly"}
+              />
+            </Grid>  
+
+            <Grid item md={6} xs={12}>
+              <TextField
+                fullWidth
+                label="Sustancia o compuesto:"
+                margin="dense"
+                name="sustanceCompose"
+                onChange={handleChange}
+                required
+                value={props.productDetails.sustanceCompose}
+                variant="outlined"
+                disabled={location.state.mode === "readOnly"}
+              />
+            </Grid>
+
+            <Grid item md={6} xs={12}></Grid>
+
+            <Divider />  
+
+            <Grid item md={6} xs={12}>
+              <ImageInput picture={props.productDetails.picture2} property="picture2"  
+              changeDetails={props.changeDetails}  
+              location={location}  />
+            </Grid>
+
+            <Grid item md={6} xs={12}>
+              <ImageInput picture={props.productDetails.picture3} property="picture3"  
+              changeDetails={props.changeDetails}  
+              location={location} />
+            </Grid>
+
+            <Grid item md={6} xs={12}>
+              <ExpansionPanel>
+                <ExpansionPanelSummary
+                  expandIcon={<ExpandMoreIcon />}
+                  aria-controls="panel1a-content"
+                  id="panel1a-header"
+                >
+                  <Typography className={classes.heading}>Segmento del mercado</Typography>
+                </ExpansionPanelSummary>
+                <ExpansionPanelDetails>
+                  
+                  <MedicineClassification 
+                  location={location}
+                  instructions={"A continuación ponga información adicional de quien utiliza o consume el producto."}
+                  property="shooperClassification"
+                  changeValuesWithProperty={props.changeValuesWithProperty}  
+                  productDetails={props.productDetails}
+                  />                
+                  
+                </ExpansionPanelDetails>
+              </ExpansionPanel>
+            </Grid>
+
+
+            <Grid item md={6} xs={12}>
+              <ExpansionPanel>
+                <ExpansionPanelSummary
+                  expandIcon={<ExpandMoreIcon />}
+                  aria-controls="panel1a-content"
+                  id="panel1a-header"
+                >
+                  <Typography className={classes.heading}>Clasificación de shooper</Typography>
+                </ExpansionPanelSummary>
+                <ExpansionPanelDetails>
+                  <MedicineClassification 
+                    location={location}
+                    instructions={"A continuación ponga información adicional de quien compra el producto."}
+                    property="marketSegment"
+                    changeValuesWithProperty={props.changeValuesWithProperty}
+                    productDetails={props.productDetails}  
+                    />           
+                </ExpansionPanelDetails>
+              </ExpansionPanel>
+            </Grid>
+
           </Grid>
+          
+
         </CardContent>
         <Divider />
         <CardActions>

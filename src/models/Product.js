@@ -20,5 +20,13 @@ export class Product {
       this.administrationWay = '';
       this.category = '';
       this.picture = '';
+      this.picture2 = '';
+      this.picture3 = '';
+      this.barCodeRegular = '';
+      this.customerBenefit = '';
+      this.prepakCondition = '';
+      this.registerInvima = '';
+      this.subClassification = '';
+      this.sustanceCompose = '';
     }
 }

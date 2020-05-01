@@ -3,13 +3,15 @@ import { colors } from '@material-ui/core';
 const white = '#FFFFFF';
 const black = '#000000';
 
+//colors.indigo[500],
+
 export default {
   black,
   white,
   primary: {
     contrastText: white,
     dark: colors.indigo[900],
-    main: "#000076",
+    main: "#00007c",
     light: colors.indigo[100]
   },
   secondary: {
@@ -54,14 +56,3 @@ export default {
   icon: colors.blueGrey[600],
   divider: colors.grey[200]
 };
-
-/*
-
-primary: {
-    contrastText: white,
-    dark: colors.indigo[900],
-    main: colors.indigo[500],
-    light: colors.indigo[100]
-  }
-  
-*/

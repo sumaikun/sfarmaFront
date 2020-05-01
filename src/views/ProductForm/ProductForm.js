@@ -14,6 +14,8 @@ import { useLocation } from "react-router-dom";
 
 import Swal from 'sweetalert2' 
 
+import api from "middleware/api";
+
 const useStyles = makeStyles(theme => ({
   root: {
     padding: theme.spacing(4)
@@ -35,6 +37,7 @@ const ProductForm = props => {
     description: props.productsState.selectedProduct.description, 
     externalBoxDesc: props.productsState.selectedProduct.externalBoxDesc,
     internalBoxDesc: props.productsState.selectedProduct.internalBoxDesc,
+    subClassification: props.productsState.selectedProduct.subClassification,
     codeCopidrogas: props.productsState.selectedProduct.codeCopidrogas,
     internalManufacturerCode: props.productsState.selectedProduct.internalManufacturerCode,
     medicineType: props.productsState.selectedProduct.medicineType,
@@ -50,13 +53,21 @@ const ProductForm = props => {
     administrationWay: props.productsState.selectedProduct.administrationWay,
     category: props.productsState.selectedProduct.category,
     picture: props.productsState.selectedProduct.picture ? props.productsState.selectedProduct.picture : null,
+    picture2: props.productsState.selectedProduct.picture2 ? props.productsState.selectedProduct.picture2 : null,
+    picture3: props.productsState.selectedProduct.picture3 ? props.productsState.selectedProduct.picture3 : null,
+    prepakCondition: props.productsState.selectedProduct.prepakCondition,
+    customerBenefit: props.productsState.selectedProduct.customerBenefit,
+    registerInvima: props.productsState.selectedProduct.registerInvima,
+    sustanceCompose: props.productsState.selectedProduct.sustanceCompose,
+    barCodeRegular: props.productsState.selectedProduct.barCodeRegular,
+    amountByReference: props.productsState.selectedProduct.amountByReference,
+    shooperClassification: props.productsState.selectedProduct.shooperClassification ? props.productsState.selectedProduct.shooperClassification : {}, 
+    marketSegment: props.productsState.selectedProduct.marketSegment ? props.productsState.selectedProduct.marketSegment : {},
     file: null
   });
 
   const changeValues = (key,value) =>
-  {
-
-    console.log(key,value);
+  { 
     setValues({
       ...values,
       [key]: value
@@ -65,13 +76,25 @@ const ProductForm = props => {
     console.log(values)
   }
 
-  const submitData = (errors) => {
+  const changeValuesWithProperty = (property,key,value) =>
+  {
+    setValues({
+      ...values,
+      [property]:{
+        ...values[property],
+        [key]:value
+      }
+    });
+  
+    console.log(values)
+  }
+
+  const submitData = async (errors) => {
     
     const product = values;
 
     product.laboratory = String(product.laboratory)
-
-
+    
     if(props.productsState.selectedProduct.id)
     {
       product._id = props.productsState.selectedProduct.id
@@ -107,6 +130,41 @@ const ProductForm = props => {
         }
     }
 
+    console.log("picture2",product.picture2)
+
+    if( typeof product.picture2 === "object" && product.picture2 != null )
+    {
+      console.log("is object")
+
+      const formData = new FormData()
+
+      formData.append('file', product.picture2)
+
+      const file2 = await api.postData("fileUpload",formData)
+
+      console.log(file2)
+
+      product.picture2 = file2.data.filename
+
+    }
+
+    if( typeof product.picture3 === "object" && product.picture3 != null )
+    {
+      console.log("is object")
+
+      const formData = new FormData()
+
+      formData.append('file', product.picture3)
+
+      const file3 = await api.postData("fileUpload",formData)
+
+      console.log(file3)
+
+      product.picture3 = file3.data.filename
+
+    }
+
+    
     if(values.file != null)
     {
       console.log("send file")
@@ -178,10 +236,12 @@ const ProductForm = props => {
           xs={12}
         >      
           <FormDetails changeDetails={changeValues} 
-           location={location}
-           user={props.authState.user}
-           productDetails={values} 
-           laboratories={props.appState.laboratories} submitData={submitData}  />
+            changeValuesWithProperty={changeValuesWithProperty}
+            location={location}
+            user={props.authState.user}
+            productDetails={values} 
+            laboratories={props.appState.laboratories}
+            submitData={submitData}  />
         </Grid>
       </Grid>
     </div>
