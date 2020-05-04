@@ -22,7 +22,8 @@
     "redux": "^4.0.5",
     "redux-persist": "^6.0.0",
     "redux-thunk": "^2.3.0",
-    "sweetalert2": "^9.10.11"
+    "sweetalert2": "^9.10.11",
+    "xlsx": "^0.16.0"
   },
   "scripts": {
     "start": "react-scripts start",
