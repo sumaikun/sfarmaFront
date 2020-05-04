@@ -42,6 +42,8 @@ const useStyles = makeStyles(theme => ({
 const Sidebar = props => {
   const { open, variant, onClose, className, ...rest } = props;
 
+  console.log("sidebar props",props)
+
   const logoutUserAction = () => {
   
     Swal.fire({
@@ -62,6 +64,13 @@ const Sidebar = props => {
    
   }
 
+  const goToProducts = () =>{
+    props.history.push({
+      pathname: '/products'
+    })
+    window.location.reload("/products");
+  }
+
 
   const classes = useStyles();
 
@@ -73,7 +82,7 @@ const Sidebar = props => {
     }, 
     {
       title: 'Productos',
-      href: '/products',
+      action: goToProducts,
       icon: <ShoppingBasketIcon />
     },
     {

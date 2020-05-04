@@ -39,7 +39,7 @@ const useStyles = makeStyles(() => ({
 
 const FormDetails = props => {
 
-  console.log("props",props)
+  //console.log("props",props)
 
   const { className, location, ...rest } = props;
 
@@ -59,7 +59,7 @@ const FormDetails = props => {
 
   const AutoCompleteChange = (event, values, name) => {
 
-    console.log("autocomplete changed",event,values,name)
+    //console.log("autocomplete changed",event,values,name)
     
     if(values){
       props.changeDetails(name,values.value)
@@ -67,7 +67,7 @@ const FormDetails = props => {
 
   }
 
-  const errors =  new Array(5)
+  const errors =  new Array(7)
 
   const rules = (key,value) =>{
     switch(key){
@@ -121,6 +121,13 @@ const FormDetails = props => {
         
           return  errors[6]
 
+      case "rejectJutification":
+
+        errors[7] = value.length > 0 && value.length < 10 ?
+          "Las precauciones deben tener mas de 10 dígitos":false
+        
+          return  errors[7]          
+
       default:
         return true
     } 
@@ -148,7 +155,7 @@ const FormDetails = props => {
         let response = await api.getData("getPrestaShopProductcategories") 
 
         arrayData = [{label:"",value:""}]
-        console.log(response.data)
+        //console.log(response.data)
         response.data.forEach( data => arrayData.push({label:data.name,value:data.id}) )
 
         if(mounted){      
@@ -156,7 +163,7 @@ const FormDetails = props => {
         }
 
 
-        console.log("prepak condition",props.productDetails.prepakCondition)
+        //console.log("prepak condition",props.productDetails.prepakCondition)
 
         if(props.productDetails.prepakCondition != "" && props.productDetails.prepakCondition != null )
         {
@@ -695,6 +702,27 @@ const FormDetails = props => {
               </ExpansionPanel>
             </Grid>
 
+            {
+              props.user.role === "admin" ?
+                <Grid item md={6} xs={12}>
+                  <TextField
+                      fullWidth
+                      helperText={rules("rejectJutification",props.productDetails.rejectJutification)}
+                      error = {rules("rejectJutification",props.productDetails.rejectJutification)}                  
+                      label="Justificación de rechazo:"
+                      margin="dense"
+                      name="rejectJutification"
+                      onChange={handleChange}
+                      required
+                      value={props.productDetails.rejectJutification}
+                      variant="outlined"
+                      multiline
+                      rows={3}      
+                      disabled={location.state.mode === "readOnly"}          
+                    />     
+                </Grid> : null
+            }
+            
           </Grid>
           
 

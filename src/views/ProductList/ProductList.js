@@ -4,11 +4,11 @@ import { withStyles } from '@material-ui/styles';
 import { IconButton, Grid, Typography } from '@material-ui/core';
 import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
-import { ProductsToolbar, ProductCard } from './components';
+import { ProductsToolbar, ProductCard , ProductsTable } from './components';
 import { connect } from 'react-redux';
 import { useLocation } from "react-router-dom";
 import Swal from 'sweetalert2'
-import { getProducts , getProduct, deleteProduct } from 'actions/products';
+import { getProducts , getProduct, deleteProduct, saveProduct } from 'actions/products';
 import { createProductPrestashop } from 'actions/app'
 
 const useStyles = theme => ({
@@ -32,7 +32,8 @@ class ProductList extends Component{
     super(props)
     console.log("productlist props",props)
     this.state = {
-      products:[]
+      products:[],
+      viewMode:"list"
     }   
   }
 
@@ -41,8 +42,13 @@ class ProductList extends Component{
 
     
     this.createButton = this.createButton.bind(this)
+    
     this.editButton = this.editButton.bind(this)
     this.deleteButton = this.deleteButton.bind(this)
+    
+    this.editTableButton = this.editTableButton.bind(this)
+    this.deleteTableButton = this.deleteTableButton.bind(this)
+
     this.filteredProducts = this.filteredProducts.bind(this)
     this.addSelectedProduct = this.addSelectedProduct.bind(this)
 
@@ -56,10 +62,21 @@ class ProductList extends Component{
     this.cancelButton = this.cancelButton.bind(this)
     this.approveButton = this.approveButton.bind(this)
 
+    this.resendAprov = this.resendAprov.bind(this)
+
     this.initializeList = this.initializeList.bind(this)
+
+    this.changeDetails = this.changeDetails.bind(this)
 
     this.initializeList()
   
+  }
+
+  changeDetails(key,value){
+    this.setState({
+      ...this.state,
+     [key]:value
+    })
   }
 
   initializeList(){
@@ -91,16 +108,31 @@ class ProductList extends Component{
           {
             this.setState({
               ...this.state,
-              products:this.props.productsState.products.filter( data => data.laboratory === this.props.history.location.state.data && data.state != "sended"   ),
+              products:this.props.productsState.products.filter( data => data.laboratory === this.props.history.location.state.data && data.state != "sended" && data.state != "rejected"   ),
               selectedProduct:null,
               page:0,
               rowsPerPage:6
             })
           }
-        })  
-
-        
+        })        
       }
+
+      if(this.props.history.location.state.mode === "filterReject")
+      {
+        this.props.getProducts((success,error)=>{
+          if(success)
+          {
+            this.setState({
+              ...this.state,
+              products:this.props.productsState.products.filter( data =>  data.state === "rejected" && data.user === this.props.authState.user._id   ),
+              selectedProduct:null,
+              page:0,
+              rowsPerPage:6
+            })
+          }
+        })
+      }
+
     }  
   }
 
@@ -156,6 +188,16 @@ class ProductList extends Component{
     })
   }
 
+  editTableButton(){
+    //console.log("data",this.state.selectedProduct)
+    this.editButton(this.state.selectedProduct._id)
+  }
+
+  deleteTableButton(){
+    //console.log("data",this.state.selectedProduct)
+    this.deleteButton(this.state.selectedProduct._id)
+  }
+
   cancelButton(data){
 
     if(data.state === "sended")
@@ -170,7 +212,7 @@ class ProductList extends Component{
     const self = this
 
     Swal.fire({
-      title: '¿Estas seguro de cancelar este producto?',
+      title: '¿Estas seguro de cancelar o rechazar este producto?',
       text: "Esta acción no podra deshacerse",
       icon: 'warning',
       showCancelButton: true,
@@ -178,10 +220,91 @@ class ProductList extends Component{
       cancelButtonColor: '#d33',
       confirmButtonText: '¡Si, adelante!',
       cancelButtonText: 'No'
-    }).then((result) => {
+    }).then( async (result) => {
+
       if (result.value) {
-        self.initializeList()
+        const { value: text } = await Swal.fire({
+          input: 'textarea',
+          inputPlaceholder: 'Da una razón para cancelar o rechazar el producto..',
+          inputAttributes: {
+            'aria-label': 'Da una razón para cancelar o rechazar el producto'
+          },
+          showCancelButton: true,
+          confirmButtonText: 'Ok',
+          cancelButtonText: 'Cancelar'
+        })
+        
+        if (text) {
+
+          console.log("product",data)
+
+            if (text.length  < 10 )
+            {
+              return Swal.fire({
+                icon: 'error',
+                title: 'Ooops',
+                text: "Necesita una descripción mas larga",          
+              })
+            }
+
+            data.state = 'rejected'
+
+            data.rejectJutification = text
+
+            self.props.saveProduct(data,(res,err)=>{       
+          
+              if(res){
+                
+                self.initializeList()
+
+                return Swal.fire({
+                  icon: 'success',
+                  title: 'Bien',
+                  text: "Datos registrados",          
+                })
+              }           
+              
+            })
+
+        }
       }
+    })
+  }
+
+  resendAprov(data){
+
+    const self = this
+
+    Swal.fire({
+      title: '¿Estas seguro de volver a enviar la aprobación del producto?',
+      text: "",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3f51b5',
+      cancelButtonColor: '#d33',
+      confirmButtonText: '¡Si, adelante!',
+      cancelButtonText: 'No'
+    }).then( async (result) => {
+
+      data.state = ''
+
+      data.rejectJutification = ""
+
+      self.props.saveProduct(data,(res,err)=>{       
+    
+        if(res){
+          
+          self.initializeList()
+
+          return Swal.fire({
+            icon: 'success',
+            title: 'Bien',
+            text: "Datos registrados",          
+          })
+        }           
+        
+      })       
+      
     })
   }
 
@@ -386,40 +509,67 @@ class ProductList extends Component{
 
     return (
       <div className={classes.root}>
-        <ProductsToolbar csvExport={this.csvExport} filteredProducts={this.filteredProducts} createButton={this.createButton}  />
-        <div className={classes.content}>
-          <Grid
-            container
-            spacing={3}
-          >
-            { this.state.products.length > 0 ? this.state.products.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map(product => (
-              <Grid
-                item
-                key={product.id}
-                lg={4}
-                md={6}
-                xs={12}
-              >
-                <ProductCard
-                editButton={this.editButton}
-                deleteButton={this.deleteButton}
-                cancelButton={this.cancelButton}
-                approveButton={this.approveButton}
-                user={this.props.authState.user}
-                product={product} />
-              </Grid>
-            )) : false }
-          </Grid>
-        </div>
-        <div className={classes.pagination}>
-            <Typography variant="caption">{1  + (page * rowsPerPage) }-{ rowsPerPage * (page + 1) } of { this.state.products.length }</Typography>
-          <IconButton>
-            <ChevronLeftIcon onClick={this.leftPagination} />
-          </IconButton>
-          <IconButton>
-            <ChevronRightIcon onClick={this.rightPagination} />
-          </IconButton>
-        </div>
+        <ProductsToolbar csvExport={this.csvExport}
+          editButton={this.editTableButton}
+          deleteButton={this.deleteTableButton}
+          selectedProduct={this.state.selectedProduct}
+          filteredProducts={this.filteredProducts}
+          createButton={this.createButton}
+          changeDetails={ this.changeDetails }
+          viewMode={this.state.viewMode}
+          />
+
+        {
+          this.state.viewMode === "list" ? 
+          <div className={classes.content}>
+            <ProductsTable appState={this.props.appState}
+              addSelectedProduct={this.addSelectedProduct}
+              products={this.state.products} />
+          </div>:null
+        }
+        
+        {
+          this.state.viewMode != "list" ?
+          <div className={classes.content}>
+            <Grid
+              container
+              spacing={3}
+            >
+              { this.state.products.length > 0 ? this.state.products.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map(product => (
+                <Grid
+                  item
+                  key={product.id}
+                  lg={4}
+                  md={6}
+                  xs={12}
+                >
+                  <ProductCard
+                  editButton={this.editButton}
+                  deleteButton={this.deleteButton}
+                  cancelButton={this.cancelButton}
+                  approveButton={this.approveButton}
+                  resendAprov={this.resendAprov}
+                  user={this.props.authState.user}
+                  product={product} />
+                </Grid>
+              )) : false }
+            </Grid>
+          </div>:null
+        }
+
+        {
+          this.state.viewMode != "list" ?
+          <div className={classes.pagination}>
+              <Typography variant="caption">{1  + (page * rowsPerPage) }-{ rowsPerPage * (page + 1) } of { this.state.products.length }</Typography>
+            <IconButton>
+              <ChevronLeftIcon onClick={this.leftPagination} />
+            </IconButton>
+            <IconButton>
+              <ChevronRightIcon onClick={this.rightPagination} />
+            </IconButton>
+          </div>:null
+        }
+
       </div>
     );
   }
@@ -431,7 +581,8 @@ const mapStateToProps = state => {
  
   return {
     productsState: state.products,
-    authState: state.auth  
+    authState: state.auth,
+    appState: state.app    
   };
 }
 
@@ -441,7 +592,11 @@ ProductList.propTypes = {
 
 const componentDefinition =  withStyles(useStyles)(ProductList);
 
-export default  connect(mapStateToProps, { getProducts, getProduct, createProductPrestashop, deleteProduct } )(componentDefinition);
+export default  connect(mapStateToProps, { getProducts,
+  getProduct,
+  createProductPrestashop,
+  deleteProduct,
+  saveProduct } )(componentDefinition);
 
 
 

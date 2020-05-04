@@ -179,7 +179,7 @@ class UserList extends Component{
           deleteButton={this.deleteButton}
           filteredUsers={this.filteredUsers} />
         <div className={classes.content}>
-          <UsersTable  addSelectedUser={this.addSelectedUser} users={this.state.users} />
+          <UsersTable appState={this.props.appState} addSelectedUser={this.addSelectedUser} users={this.state.users} />
         </div>
       </div>
     );  
@@ -190,7 +190,8 @@ class UserList extends Component{
 const mapStateToProps = state => {
  
   return {
-    usersState: state.users,  
+    usersState: state.users,
+    appState: state.app  
   };
 }
 

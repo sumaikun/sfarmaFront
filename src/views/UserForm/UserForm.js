@@ -40,6 +40,7 @@ const UserForm = props => {
     password: '',
     confirmPassword: '',
     state: props.usersState.selectedUser.state,
+    conditions: props.usersState.selectedUser.conditions,
     file: null
   });
 

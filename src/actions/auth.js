@@ -5,7 +5,7 @@ import {
   LOGOUT_SUCCESS
 } from "../constants";
 import api from "../middleware/api";
-
+import Swal from 'sweetalert2'
 //console.log("api",api)
 
 // Login actions
@@ -30,9 +30,34 @@ export function loginUser(creds,cb = null) {
     //console.log("got dispatch");
     return api.login("auth", creds)
       .then(( response ) => {
-        //console.log(response)
+        
+        console.log(response)
         // Dispatch the success action
-        dispatch(receiveLogin(response.data.user,response.data.token));
+
+        if(response.data.user.role != "admin" && response.data.user.conditions != true)
+        {
+          Swal.fire({
+            title: '¿Acepta los terminos y condiciones?',
+            text: "",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3f51b5',
+            cancelButtonColor: '#d33',
+            confirmButtonText: '¡Si, adelante!',
+            cancelButtonText: 'No'
+          }).then( async (result) => {
+            if (result.value) {
+
+              await api.getData("/updateConditions/"+response.data.user._id)
+              dispatch(receiveLogin(response.data.user,response.data.token))           
+            
+            }
+          })
+        }else{
+          dispatch(receiveLogin(response.data.user,response.data.token));
+        }
+
+        
         if(cb) { cb(response,false) }
       })
       .catch(err => { console.log("Error: ", err)

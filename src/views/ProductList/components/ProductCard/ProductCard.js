@@ -22,6 +22,8 @@ import CancelIcon from '@material-ui/icons/Cancel';
 
 import { getInitials } from 'helpers';
 
+import Swal from 'sweetalert2'
+
 const useStyles = makeStyles(theme => ({
   root: {},
   imageContainer: {
@@ -143,7 +145,10 @@ const ProductCard = props => {
             onClick={()=>{
               props.approveButton(product)
             }}
-            style={{display: props.user.role === "admin"  ? "block":"none"}}
+            style={{ display: props.user.role === "admin"  ? 
+              product.state === "" ?
+              "block":"none":"none" 
+            }}
           >
             <CheckIcon className={classes.statsIcon} />
             <Typography
@@ -153,10 +158,14 @@ const ProductCard = props => {
               Aprobar
             </Typography>
           </Grid>
+
           <Grid
             className={classes.statsItem}
             item
-            style={{display: props.user.role === "admin"  ? "block":"none"}}
+            style={{ display: props.user.role === "admin"  ? 
+              product.state === "" ?
+              "block":"none":"none" 
+            }}
             onClick={()=>{
               props.cancelButton(product)
             }}
@@ -168,11 +177,33 @@ const ProductCard = props => {
             >
               Rechazar
             </Typography>
+          </Grid>
+
+          <Grid
+            className={classes.statsItem}
+            item
+            onClick={()=>{
+              props.resendAprov(product)
+            }}
+            style={{ display: product.state === "rejected" &&
+              (props.user.role === "admin" || product.user === props.user._id)
+              ?
+              "block":"none" 
+            }}
+          >
+            <CheckIcon className={classes.statsIcon} />
+            <Typography
+              display="inline"
+              variant="body2"
+            >
+              Volver a enviar para aprobacion
+            </Typography>
           </Grid>   
 
         </Grid>
       </CardActions>
       <Divider />
+        
         <CardActions style={{justifyContent:"center"
         ,backgroundColor:"#000076"
         ,color:"white"
@@ -182,7 +213,20 @@ const ProductCard = props => {
             Transferido
           </Typography>            
           </Grid>      
-        </CardActions>       
+        </CardActions> 
+
+        <CardActions onClick={()=>{ Swal.fire( product.rejectJutification ) }}
+        style={{justifyContent:"center"
+        ,backgroundColor:"#EA3F20"
+        ,color:"white"
+        ,display: product.state === "rejected"  ? "flex":"none"}} >
+          <Grid>
+            <Typography style={{color:"white",fontWeight:"bold"}} > 
+              Rechazado
+            </Typography>            
+          </Grid>      
+        </CardActions>
+
     </Card>
   );
 };

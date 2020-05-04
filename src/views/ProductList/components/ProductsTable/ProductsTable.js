@@ -42,20 +42,20 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-const UsersTable = props => {
-  const { className, users, ...rest } = props;
+const ProductsTable = props => {
+  const { className, products, ...rest } = props;
 
   const classes = useStyles();
 
-  const [selectedUser, setSelectedUser ] = useState({});
+  const [selectedProduct, setSelectedProduct ] = useState({});
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [page, setPage] = useState(0);
 
 
 
   const handleSelectOne = (event) => {    
-    setSelectedUser(event.target.value)
-    props.addSelectedUser(event.target.value)
+    setSelectedProduct(event.target.value)
+    props.addSelectedProduct(event.target.value)
   };
 
   const handlePageChange = (event, page) => {
@@ -84,57 +84,55 @@ const UsersTable = props => {
                   
                   </TableCell>
                   <TableCell>Nombre</TableCell>
-                  <TableCell>Apellido</TableCell>
-                  <TableCell>Correo</TableCell>
-                  <TableCell>Rol</TableCell>
+                  <TableCell>Descripción</TableCell>
+                  <TableCell>Tipo de medicamento</TableCell>
                   <TableCell>Laboratorio</TableCell>
                   <TableCell>Estado</TableCell>
+                  <TableCell>Categoría</TableCell>                  
                   <TableCell>fecha de registro</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
-                {users.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map(user => (
+                {products.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map(product => (
                   <TableRow
                     className={classes.tableRow}
                     hover
-                    key={user.id}
+                    key={product.id}
                     
                   >
                     <TableCell padding="checkbox">
                       <Radio
-                        checked={selectedUser === user._id}
+                        checked={selectedProduct === product._id}
                         color="primary"
-                        name="selectedUser"
+                        name="selectedProduct"
                         onChange={handleSelectOne}
-                        value={user._id}
+                        value={product._id}
                       />
                     </TableCell>
                     <TableCell>
                       <div className={classes.nameContainer}>
                         <Avatar
                           className={classes.avatar}
-                          src={  process.env.REACT_APP_SERVE_IMAGE + user.picture}
+                          src={  process.env.REACT_APP_SERVE_IMAGE + product.picture}
                         >
-                          {getInitials(user.name)}
+                          {getInitials(product.name)}
                         </Avatar>
-                        <Typography variant="body1">{user.name}</Typography>
+                        <Typography variant="body1">{product.name}</Typography>
                       </div>
                     </TableCell>
-                    <TableCell>{user.lastName}</TableCell>
-                    <TableCell>{user.email}</TableCell>
-                    <TableCell>
-                      {user.role}
-                    </TableCell>
+                    <TableCell>{ product.description }</TableCell>
+                    <TableCell>{ product.medicineType }</TableCell>              
                     <TableCell>
                       {
-                        props.appState.laboratories.filter( lab =>  lab.id === user.laboratory )[0] ?
-                        props.appState.laboratories.filter( lab =>  lab.id === user.laboratory )[0].name : false  
+                        props.appState.laboratories.filter( lab =>  lab.id === parseInt(product.laboratory) )[0] ?
+                        props.appState.laboratories.filter( lab =>  lab.id === parseInt(product.laboratory) )[0].name : false  
                       }
                     </TableCell>
-                    <TableCell>{user.state}</TableCell>
+                    <TableCell>{product.state}</TableCell>
+                    <TableCell>{product.category}</TableCell>
                     <TableCell>
-                      {/* moment(user.date).format('DD/MM/YYYY') */}
-                      { user.date.split(" ")[0] }
+                      {/* moment(product.date).format('DD/MM/YYYY') */}
+                      { product.date.split(" ")[0] }
                     </TableCell>
                   </TableRow>
                 ))}
@@ -146,7 +144,7 @@ const UsersTable = props => {
       <CardActions className={classes.actions}>
         <TablePagination
           component="div"
-          count={users.length}
+          count={products.length}
           onChangePage={handlePageChange}
           onChangeRowsPerPage={handleRowsPerPageChange}
           page={page}
@@ -158,9 +156,9 @@ const UsersTable = props => {
   );
 };
 
-UsersTable.propTypes = {
+ProductsTable.propTypes = {
   className: PropTypes.string,
-  users: PropTypes.array.isRequired
+  products: PropTypes.array.isRequired
 };
 
-export default UsersTable;
+export default ProductsTable;

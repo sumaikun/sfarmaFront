@@ -18,6 +18,7 @@ import  api  from 'middleware/api'
 import Autocomplete from '@material-ui/lab/Autocomplete'; 
 
 
+
 const useStyles = makeStyles((theme) => ({
   paper: {
     marginTop: theme.spacing(8),
@@ -99,6 +100,17 @@ export default function SignUp(props) {
       ...values,
       [event.target.name]: event.target.value
     });   
+
+  };
+
+
+  const handleCheck = (event) => {
+    console.log(event.target.checked,event.target.name);
+
+    setValues({
+      ...values,
+      [event.target.name]: event.target.checked
+    });
 
   };
 
@@ -307,6 +319,15 @@ export default function SignUp(props) {
                   
                 />
             </Grid>
+
+            <Grid item xs={12}>
+
+              <FormControlLabel
+                control={<Checkbox name="conditions"  onChange={handleCheck} />}
+                label="¿Acepta terminos y condiciones?" 
+              />
+
+            </Grid>
             
            
           </Grid>
@@ -321,7 +342,10 @@ export default function SignUp(props) {
           </Button>
           <Grid container justify="flex-end">
             <Grid item>
-              <Link href="#" variant="body2" onClick={ () => props.history.push("/login") } >
+              <Link  variant="body2" onClick={ (e) => {
+                e.preventDefault()
+                props.history.push("/login")
+              }} >
                 ¿ Ya tienes una cuenta ? Ingresar
               </Link>
             </Grid>

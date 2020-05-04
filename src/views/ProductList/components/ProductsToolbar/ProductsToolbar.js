@@ -6,6 +6,12 @@ import { Button } from '@material-ui/core';
 
 import { SearchInput } from 'components';
 
+import Radio from '@material-ui/core/Radio';
+import RadioGroup from '@material-ui/core/RadioGroup';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
+import FormControl from '@material-ui/core/FormControl';
+import FormLabel from '@material-ui/core/FormLabel';
+
 const useStyles = makeStyles(theme => ({
   root: {},
   row: {
@@ -38,13 +44,46 @@ const ProductsToolbar = props => {
     props.filteredProducts(event.target.value)
   }
 
+  const handleChange = event => {
+  
+    props.changeDetails(event.target.name,event.target.value)
+
+  };
+
   return (
     <div
       {...rest}
       className={clsx(classes.root, className)}
     >
+      <div className={classes.row}  >    
+        <FormControl component="fieldset" style={{marginTop:"50px"}}>
+            <FormLabel component="legend">Tipo de vista:</FormLabel>
+            <RadioGroup aria-label="viewMode" name="viewMode" 
+              onChange={handleChange} value={props.viewMode} >
+              
+              <FormControlLabel value="list" control={<Radio />} 
+                label="Lista" />
+
+              <FormControlLabel value="minimal" control={<Radio />} 
+                label="Miniatura" />
+              
+          </RadioGroup>
+        </FormControl>
+      </div>
+
       <div className={classes.row}>
         <span className={classes.spacer} />
+
+        <Button className={classes.importButton}  
+          disabled={ props.selectedProduct === null } 
+          style={{ display: props.viewMode === "list" ? "block":"none"}}
+          onClick={props.editButton}>Editar</Button>
+        
+        <Button className={classes.exportButton}
+          disabled={ props.selectedProduct === null  } 
+          style={{ display: props.viewMode === "list" ? "block":"none"}}
+          onClick={props.deleteButton}>Eliminar</Button>
+
         { //<Button className={classes.importButton}>Eliminar</Button> 
         }
         <Button className={classes.exportButton}  onClick={props.csvExport} >Exportar</Button>

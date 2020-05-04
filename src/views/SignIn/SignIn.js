@@ -129,14 +129,18 @@ const SignIn = (props) => {
           })
         }
         else{
-          Window.StopAutoFetching = false
+          //alert("No es admin")
 
+          //return null;
+          history.push('/');
         }
         
 
         
       }
       if(error){
+
+        setClick(false)
         
         let errorText
 
@@ -214,7 +218,10 @@ const SignIn = (props) => {
                </Link>*/ } 
             </Grid>
             <Grid item>
-              <Link href="#" variant="body2" onClick={ () => props.history.push("/signUp") }>
+              <Link  variant="body2" onClick={ (e) => {
+                e.preventDefault()  
+                props.history.push("/signUp")
+              }}>
                 {"¿ No tienes una cuenta ? Registrarse"}
               </Link>
             </Grid>

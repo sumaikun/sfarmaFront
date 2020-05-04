@@ -75,6 +75,14 @@ const Routes = (props) => {
         />
 
         <RouteWithLayout
+            component={ProductList}
+            exact
+            layout={Main}
+            authenticated={true}
+            path="/filteredProducts"
+        />  
+
+        <RouteWithLayout
             component={ProductForm}
             exact
             layout={Main}

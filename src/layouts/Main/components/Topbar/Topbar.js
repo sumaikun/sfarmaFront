@@ -3,7 +3,7 @@ import { Link as RouterLink } from 'react-router-dom';
 import clsx from 'clsx';
 import PropTypes from 'prop-types';
 import { makeStyles, withStyles } from '@material-ui/styles';
-import { AppBar, Toolbar, Badge, Hidden, IconButton, Menu, MenuItem, Typography } from '@material-ui/core';
+import { AppBar, Toolbar, Badge, Hidden, IconButton, Menu, MenuItem, Divider, Typography } from '@material-ui/core';
 import MenuIcon from '@material-ui/icons/Menu';
 import NotificationsIcon from '@material-ui/icons/NotificationsOutlined';
 import InputIcon from '@material-ui/icons/Input';
@@ -58,7 +58,7 @@ const Topbar = props => {
 
   const [notifications, setNotifications] = useState([]);
 
-
+  const [notifications2, setNotifications2] = useState([]);
    
   useEffect(() => { 
 
@@ -73,12 +73,12 @@ const Topbar = props => {
         
         console.log("product",data)
 
-        if(!laboratoriesToNotify.includes(data.laboratory) && data.state != "sended" )
+        if(!laboratoriesToNotify.includes(data.laboratory) && data.state != "sended" &&  data.state != "rejected")
         {
           laboratoriesToNotify.push(data.laboratory)  
         }
 
-        if( data.state != "sended" )
+        if( data.state != "sended" &&  data.state != "rejected" )
         {
           dataTocheck += 1
         }
@@ -91,13 +91,36 @@ const Topbar = props => {
 
     }
 
+    if(props.authState.user.role != "admin")
+    {
+
+      let rejectsToNotify = 0
+
+      props.productsState.products.forEach( product => { 
+        if(product.user === props.authState.user._id && product.state === "rejected" )
+        {
+          rejectsToNotify += 1
+        }
+      })
+      
+      setNotifications2({ count: rejectsToNotify })
+
+    }
+
   },[])
 
   const [open, setOpen] = useState(null);
 
+  const [open2, setOpen2] = useState(null);
+
   const openMenu = (event) => {
     setOpen(event.currentTarget);
     console.log("open menu",open)
+  };
+
+  const openMenu2 = (event) => {
+    setOpen2(event.currentTarget);
+    console.log("open menu2",open2)
   };
 
   const closeMenu = () => {    
@@ -105,12 +128,28 @@ const Topbar = props => {
     console.log("close menu",open)
   }
 
+  const closeMenu2 = () => {    
+    setOpen2(null)
+    console.log("close menu2",open2)
+  }
+
   const searchNews = (id) => {
     closeMenu()
     props.history.push({
-      pathname: '/products',
+      pathname: '/filteredProducts',
       state: { mode:"filterNew" , data: id }
     })
+    window.location.reload()   
+  }
+
+  const searchRejectments = () => {
+    closeMenu2()
+    props.history.push({
+      pathname: '/filteredProducts',
+      state: { mode:"filterReject" }
+    })
+    window.location.reload() 
+   
   }
 
   const logoutUserAction = () => {
@@ -174,7 +213,10 @@ const Topbar = props => {
               anchorEl={open}
               style={{marginRight:"250px"}}
             >
-
+              <Typography style={{textAlign:"center",fontWeight:"bold",fontSize:"12px"}} >
+                 Productos pendientes de verificación 
+              </Typography>
+              <Divider />
               { notifications.laboratories && notifications.laboratories.map(
                 data => 
                   <MenuItem onClick={()=>searchNews(data)}>
@@ -183,7 +225,9 @@ const Topbar = props => {
                       appState.laboratories[appState.laboratories.findIndex( sdata => sdata.id === parseInt(data) )].name+" " : false
                     }  
                     <Badge style={{marginLeft:"10px"}} color="secondary" variant="dot">
-                      <Typography>{notifications.count}</Typography>
+                      <Typography>{props.productsState.products.filter( 
+                          product => product.laboratory === data &&  product.state != "sended" &&  product.state != "rejected"
+                        ).length  }</Typography>
                     </Badge>
                     
                   </MenuItem>
@@ -192,6 +236,48 @@ const Topbar = props => {
               
               
           </StyledMenu>
+
+        
+        {
+          
+          props.authState.user.role != "admin" ?
+
+          <IconButton 
+            color="inherit"
+            onClick={openMenu2}
+          >
+            <Badge
+              badgeContent={notifications2.count}
+            >
+              <NotificationsIcon />
+            </Badge>            
+          </IconButton>:
+          false
+        }
+
+          <StyledMenu
+              keepMounted
+              open={Boolean(open2)}
+              onClose={closeMenu2}
+              anchorEl={open2}
+              style={{marginRight:"250px"}}
+            >
+              <Typography style={{textAlign:"center",fontWeight:"bold",fontSize:"12px"}} >
+                 Rechazos pendientes
+              </Typography>
+              <Divider />
+              
+              <MenuItem onClick={()=>searchRejectments()}>
+                
+                <Badge style={{marginLeft:"10px"}} color="secondary" variant="dot">
+                  <Typography>Verificar Rechazos</Typography>
+                </Badge>
+                
+              </MenuItem>           
+              
+          </StyledMenu>
+
+
 
         <Hidden mdDown>         
 

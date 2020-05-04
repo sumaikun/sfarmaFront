@@ -10,7 +10,9 @@ import {
   Divider,
   Grid,
   Button,
-  TextField
+  TextField,
+  Checkbox,
+  FormControlLabel
 } from '@material-ui/core';
 
 import  api  from '../../../../middleware/api'
@@ -26,7 +28,7 @@ const useStyles = makeStyles(() => ({
 const FormDetails = props => {
 
 
-  console.log("form details props",props)
+  //console.log("form details props",props)
 
   const { className,  ...rest } = props;
 
@@ -37,7 +39,7 @@ const FormDetails = props => {
 
   const handleChange = event => {
 
-    console.log(event,event.target.name,event.target.value)
+    //console.log(event,event.target.name,event.target.value)
   
     props.changeDetails(event.target.name,event.target.value)
 
@@ -45,13 +47,21 @@ const FormDetails = props => {
 
   const AutoCompleteChange = (event, values, name) => {
 
-    console.log("autocomplete changed",event,values,name)
+    //console.log("autocomplete changed",event,values,name)
     
     if(values){
       props.changeDetails(name,values.value)
     }
 
   }
+
+  const handleCheck = (event) => {
+
+    //console.log(event.target.checked,event.target.name);
+
+    props.changeDetails(event.target.name,event.target.value)
+
+  };
   
 
   const [userRoles, setUserRoles ] = useState([]);
@@ -311,6 +321,14 @@ const FormDetails = props => {
                   </option>
                 ))}
               </TextField>
+            </Grid>
+
+            <Grid item md={6} xs={12}>
+              <FormControlLabel
+                  control={<Checkbox name="conditions"  checked={props.userDetails.conditions}
+                  onChange={handleCheck} />}
+                  label="¿Aceptó terminos y condiciones?" 
+              />
             </Grid>
           
           </Grid>

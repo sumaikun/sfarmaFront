@@ -63,6 +63,7 @@ const ProductForm = props => {
     amountByReference: props.productsState.selectedProduct.amountByReference,
     shooperClassification: props.productsState.selectedProduct.shooperClassification ? props.productsState.selectedProduct.shooperClassification : {}, 
     marketSegment: props.productsState.selectedProduct.marketSegment ? props.productsState.selectedProduct.marketSegment : {},
+    rejectJutification: props.productsState.selectedProduct.rejectJutification ? props.productsState.selectedProduct.rejectJutification : "",
     file: null
   });
 
