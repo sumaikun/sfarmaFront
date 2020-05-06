@@ -61,11 +61,16 @@ import {
 
 
   export function saveUser(user,cb = null) {
-  
+    
+    console.log("user to save",user)
+
     return dispatch => {
       
-      if(user._id){
-        return api.putData("users/"+user._id,user)
+      if(user._id || user.id ){
+
+        const id = user._id || user.id
+
+        return api.putData("users/"+id,user)
         .then(( response ) => {
 
           //dispatch(addUser(user));
@@ -81,6 +86,7 @@ import {
         .then(( response ) => {
 
           //dispatch(addUser(user));
+          console.log("post response",response)
 
           dispatch(selectUser(response.data));
           
@@ -99,7 +105,7 @@ import {
   export function deleteUser(user,cb = null) {
   
     return dispatch => {
-      return api.deleteData("users/"+user.id)
+      return api.deleteData("users/"+user._id)
         .then(( response ) => {
 
           dispatch(removeUser(user));   

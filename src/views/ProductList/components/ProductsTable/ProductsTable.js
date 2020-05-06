@@ -80,8 +80,7 @@ const ProductsTable = props => {
             <Table>
               <TableHead>
                 <TableRow>
-                  <TableCell padding="checkbox">
-                  
+                  <TableCell padding="checkbox">                  
                   </TableCell>
                   <TableCell>Nombre</TableCell>
                   <TableCell>Descripción</TableCell>
@@ -98,6 +97,10 @@ const ProductsTable = props => {
                     className={classes.tableRow}
                     hover
                     key={product.id}
+                    onDoubleClick={()=>{
+                      //console.log("double click")
+                      props.editButton(product._id,"readOnly")
+                    }}
                     
                   >
                     <TableCell padding="checkbox">

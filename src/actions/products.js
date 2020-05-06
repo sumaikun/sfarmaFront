@@ -60,15 +60,18 @@ import {
   }
 
 
-  export function saveProduct(user,cb = null) {
+  export function saveProduct(product,cb = null) {
   
     return dispatch => {
       
-      if(user._id){
-        return api.putData("products/"+user._id,user)
+      if(product._id || product.id ){
+
+        const id = product._id || product.id 
+
+        return api.putData("products/"+id,product)
         .then(( response ) => {
 
-          //dispatch(addProduct(user));
+          //dispatch(addProduct(product));
           
           if(cb) { cb(response,false) }
         
@@ -77,10 +80,10 @@ import {
           if(cb) { cb(false,err) }
         });
       }else{
-        return api.postData("products",user)
+        return api.postData("products",product)
         .then(( response ) => {
 
-          //dispatch(addProduct(user));
+          //dispatch(addProduct(product));
 
           dispatch(selectProduct(response.data));
           

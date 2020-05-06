@@ -77,6 +77,16 @@ const ProductsToolbar = props => {
         <Button className={classes.importButton}  
           disabled={ props.selectedProduct === null } 
           style={{ display: props.viewMode === "list" ? "block":"none"}}
+          onClick={props.approveButton}>Aprovar</Button>
+        
+        <Button className={classes.exportButton}
+          disabled={ props.selectedProduct === null  } 
+          style={{ display: props.viewMode === "list" ? "block":"none"}}
+          onClick={props.cancelButton}>Rechazar</Button>
+
+        <Button className={classes.importButton}  
+          disabled={ props.selectedProduct === null } 
+          style={{ display: props.viewMode === "list" ? "block":"none"}}
           onClick={props.editButton}>Editar</Button>
         
         <Button className={classes.exportButton}

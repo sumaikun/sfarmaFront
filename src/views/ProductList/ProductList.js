@@ -46,6 +46,9 @@ class ProductList extends Component{
     
     this.editButton = this.editButton.bind(this)
     this.deleteButton = this.deleteButton.bind(this)
+
+    this.approveTableButton = this.approveTableButton.bind(this)
+    this.cancelTableButton = this.cancelTableButton.bind(this)
     
     this.editTableButton = this.editTableButton.bind(this)
     this.deleteTableButton = this.deleteTableButton.bind(this)
@@ -230,6 +233,16 @@ class ProductList extends Component{
     })
   }
 
+  approveTableButton(){
+    //console.log("data",this.state.selectedProduct)
+    this.approveButton(this.state.selectedProduct)
+  }
+
+  cancelTableButton(){
+    //console.log("data",this.state.selectedProduct)
+    this.cancelButton(this.state.selectedProduct)
+  }
+
   editTableButton(){
     //console.log("data",this.state.selectedProduct)
     this.editButton(this.state.selectedProduct._id)
@@ -237,8 +250,10 @@ class ProductList extends Component{
 
   deleteTableButton(){
     //console.log("data",this.state.selectedProduct)
-    this.deleteButton(this.state.selectedProduct._id)
+    this.deleteButton(this.state.selectedProduct)
   }
+
+
 
   cancelButton(data){
 
@@ -553,6 +568,7 @@ class ProductList extends Component{
       <div className={classes.root}>
         <p>Subir archivo</p>
         <input 
+            disabled
             required 
             type="file" 
             name="file" 
@@ -567,12 +583,15 @@ class ProductList extends Component{
           createButton={this.createButton}
           changeDetails={ this.changeDetails }
           viewMode={this.state.viewMode}
+          approveButton={this.approveTableButton}
+          cancelButton={this.cancelTableButton}
           />
 
         {
           this.state.viewMode === "list" ? 
           <div className={classes.content}>
             <ProductsTable appState={this.props.appState}
+              editButton={this.editButton}
               addSelectedProduct={this.addSelectedProduct}
               products={this.state.products} />
           </div>:null

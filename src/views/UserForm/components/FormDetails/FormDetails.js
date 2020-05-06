@@ -12,7 +12,8 @@ import {
   Button,
   TextField,
   Checkbox,
-  FormControlLabel
+  FormControlLabel,
+  Typography
 } from '@material-ui/core';
 
 import  api  from '../../../../middleware/api'
@@ -302,7 +303,7 @@ const FormDetails = props => {
                 fullWidth
                 label="Estado"
                 margin="dense"
-                name="role"
+                name="state"
                 onChange={handleChange}
                 required
                 select
@@ -323,13 +324,21 @@ const FormDetails = props => {
               </TextField>
             </Grid>
 
-            <Grid item md={6} xs={12}>
-              <FormControlLabel
-                  control={<Checkbox name="conditions"  checked={props.userDetails.conditions}
-                  onChange={handleCheck} />}
-                  label="¿Aceptó terminos y condiciones?" 
-              />
-            </Grid>
+            { props.userDetails.conditions ?  <Typography
+              className={classes.locationText}
+              color="textSecondary"
+              variant="body1"
+            >
+              El usuario ya acepto terminos y condiciones
+            </Typography> :
+
+            <Typography
+              className={classes.locationText}
+              color="textSecondary"
+              variant="body1"
+            >
+              El usuario no ha aceptado terminos y condiciones
+            </Typography>  }
           
           </Grid>
         </CardContent>
