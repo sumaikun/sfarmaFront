@@ -69,6 +69,23 @@ const ProductsTable = props => {
     setPage(0)
   };
 
+  const getMedicamentType = (name) =>{
+    switch(name){
+      case "VL":
+        return "Venta Libre" 
+      case "PM":
+        return "Prescripción Médica"
+      case "F":
+        return "Fitoterapéuticos"
+      case "CF":
+        return "Cadena de frío"
+      case "RP":
+        return "Maneja regulación de precio"
+      case "CON":
+        return "Controlado"
+    }
+  }
+
   return (
     <Card
       {...rest}
@@ -124,7 +141,7 @@ const ProductsTable = props => {
                       </div>
                     </TableCell>
                     <TableCell>{ product.description }</TableCell>
-                    <TableCell>{ product.medicineType }</TableCell>              
+                    <TableCell>{ getMedicamentType(product.medicineType) }</TableCell>              
                     <TableCell>
                       {
                         props.appState.laboratories.filter( lab =>  lab.id === parseInt(product.laboratory) )[0] ?

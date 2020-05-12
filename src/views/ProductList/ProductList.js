@@ -193,8 +193,87 @@ class ProductList extends Component{
   }
 
   csvExport() {
+
+    
+    const getMedicamentType = (name) =>{
+      switch(name){
+        case "VL":
+          return "Venta Libre" 
+        case "PM":
+          return "Prescripción Médica"
+        case "F":
+          return "Fitoterapéuticos"
+        case "CF":
+          return "Cadena de frío"
+        case "RP":
+          return "Maneja regulación de precio"
+        case "CON":
+          return "Controlado"
+      }
+    }
+
+    const getPrepakCondition = (name) =>{
+      switch(name){
+        case "KIT":
+          return "Kit" 
+        case "AM":
+          return "Amarre"
+        case "OCC":
+          return "Oferta cliente consumidor"
+        case "ODC":
+          return "Oferta distribuidora comerciante"        
+      }
+    }
+
+    const getCustomerBenefit = (name) =>{
+      switch(name){
+        case "PL":
+          return "Pague 2 lleve 3" 
+        case "DP":
+          return "Descuento progresivo"
+        case "CE":
+          return "Condición especial"
+        case "PR":
+          return "Plan Recambio"
+        case "NA":
+          return "No aplica"        
+      }
+    }
+
+    let arrData = []
       
-    let arrData = this.state.products;
+    this.state.products.forEach( product => {
+      arrData.push({
+        "Nombre Comercial":product.name,
+        "Descripcion":product.description,
+        "EAN-13 Desc Externo":product.externalBoxDesc,
+        "EAN-13 Desc Interno":product.internalBoxDesc,
+        "Código copidrogas":product.codeCopidrogas,
+        "Código interno":product.internalManufacturerCode,
+        "Subclasificación":product.subClassification,
+        "Tipo de medicamento":getMedicamentType(product.medicineType),
+        "Presentación":product.appearance,
+        "Laboratorio":this.props.appState.laboratories.filter( lab =>  lab.id === parseInt(product.laboratory) )[0] ?
+        this.props.appState.laboratories.filter( lab =>  lab.id === parseInt(product.laboratory) )[0].name : "",
+        "Dimensiones":product.dimens,
+        "Peso":product.weight,
+        "Cantidad Medida":product.amountSized,
+        "Unidad de medida":product.measureUnit,
+        "Indicaciones":product.indications,
+        "ContraIndicaciones":product.contraindications,
+        "Precauciones":product.precautions,
+        "Via de administración":product.administrationWay,
+        "Categoría":product.category,
+        "Invima": product.prepakCondition ? "SI":"NO",
+        "Condición": getPrepakCondition(product.prepakCondition),
+        "Código de barras regular":product.barCodeRegular,
+        "Cantidad por referencia":product.amountByReference,
+        "Beneficios al cliente":getCustomerBenefit(product.customerBenefit),
+        "Registro Invima":product.registerInvima,
+        "Sustancia o compuesto":product.sustanceCompose
+      })
+    })
+
     let csvContent = "data:text/csv;charset=utf-8,";
     csvContent += [
       Object.keys(arrData[0]).join(";"),
