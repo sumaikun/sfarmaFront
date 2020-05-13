@@ -101,6 +101,7 @@ export default {
   postData (action, data) {
     let url = `${BASE_URL}`
     url += action
+    console.log(action,data)
     return instance.post(url, data)
   },
   putData (action, data) {

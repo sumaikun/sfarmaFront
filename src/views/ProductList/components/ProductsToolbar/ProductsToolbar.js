@@ -12,6 +12,7 @@ import FormControlLabel from '@material-ui/core/FormControlLabel';
 import FormControl from '@material-ui/core/FormControl';
 import FormLabel from '@material-ui/core/FormLabel';
 
+
 const useStyles = makeStyles(theme => ({
   root: {},
   row: {
@@ -70,6 +71,8 @@ const ProductsToolbar = props => {
           </RadioGroup>
         </FormControl>
       </div>
+
+      <br/><br/>
 
       <div className={classes.row}>
         <span className={classes.spacer} />

@@ -11,6 +11,7 @@ import Swal from 'sweetalert2'
 import { getProducts , getProduct, deleteProduct, saveProduct } from 'actions/products';
 import { createProductPrestashop } from 'actions/app'
 import * as XLSX from 'xlsx'
+import api from 'middleware/api'
 
 const useStyles = theme => ({
   root: {
@@ -40,7 +41,7 @@ class ProductList extends Component{
 
   componentDidMount(){   
 
-
+    this.linkRef = React.createRef();
     
     this.createButton = this.createButton.bind(this)
     
@@ -107,7 +108,51 @@ class ProductList extends Component{
           })
         })
 
-        console.log("hojas",hojas)
+        console.log("hojas",hojas[0].data)
+
+        if( hojas && !hojas[0].data)
+        {
+          Swal.fire({title:"Espera",icon:"warning",text:"La información debe estar en la primera hoja, solo esta se tiene en cuenta"})
+        }
+        else{
+
+          let arrData = []
+      
+          hojas[0].data.forEach( product => {
+            arrData.push({
+              name:product["Nombre Comercial"],
+              description:product["Descripcion"],
+              externalBoxDesc:product["EAN-13 Desc Externo"],
+              internalBoxDesc:product["EAN-13 Desc Interno"],
+              codeCopidrogas:product["Código copidrogas"],
+              internalManufacturerCode:product["Código interno"],
+              subClassification:product["Subclasificación"],
+              medicineType:product["Tipo de medicamento"],
+              appearance:product["Presentación"],
+              laboratory:product["Laboratorio"],
+              dimens:product["Dimensiones"],
+              weight:String(product["Peso"]),
+              amountSized:String(product["Cantidad Medida"]),
+              measureUnit:product["Unidad de medida"],
+              indications:product["Indicaciones"],
+              contraindications:product["ContraIndicaciones"],
+              precautions:product["Precauciones"],
+              administrationWay:product["Via de administración"],
+              category:product["Categoría"],
+              prepakCondition:product["Condición"],
+              barCodeRegular:product["Código de barras regular"],
+              amountByReference:String(product["Cantidad por referencia"]),
+              customerBenefit:product["Beneficios al cliente"],
+              registerInvima:product["Registro Invima"],
+              sustanceCompose:product["Sustancia o compuesto"]
+            })
+          })
+
+
+          api.postData("massiveUpload",arrData).then( data => {
+            Swal.fire({icon:"success",text:"Información procesada"})
+          }).catch( e => console.error(e) )
+        }
 
         /*this2.setState({
           selectedFileDocument: target.files[0],
@@ -647,13 +692,31 @@ class ProductList extends Component{
       <div className={classes.root}>
         <p>Subir archivo</p>
         <input 
-            disabled
             required 
             type="file" 
             name="file" 
             id="file" 
             onChange={this.handleInputChange} 
         />
+        
+
+        <button onClick={ async ()=>{
+          //alert("Formato adecuado para subir datos")
+          Window.StopAutoFetching = true
+          const file = await api.getData("/downloadFormat")
+          //console.log("file",file)
+          const blob = new Blob([file.data], { type: 'text/csv;charset=utf-8;' });
+          const href = window.URL.createObjectURL(blob);
+          const a = this.linkRef.current;
+          a.download = 'format.csv';
+          a.href = href;
+          a.click();
+          a.href = '';
+          Window.StopAutoFetching = false
+        }} >Descargar formato</button>
+
+        <a ref={this.linkRef}/>
+
         <ProductsToolbar csvExport={this.csvExport}
           editButton={this.editTableButton}
           deleteButton={this.deleteTableButton}
