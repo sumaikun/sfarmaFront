@@ -298,8 +298,8 @@ class ProductList extends Component{
         "Subclasificación":product.subClassification,
         "Tipo de medicamento":getMedicamentType(product.medicineType),
         "Presentación":product.appearance,
-        "Laboratorio":this.props.appState.laboratories.filter( lab =>  lab.id === parseInt(product.laboratory) )[0] ?
-        this.props.appState.laboratories.filter( lab =>  lab.id === parseInt(product.laboratory) )[0].name : "",
+        "Laboratorio":this.props.appState.laboratories.filter( lab =>  lab.prestashopId === parseInt(product.laboratory) )[0] ?
+        this.props.appState.laboratories.filter( lab =>  lab.prestashopId === parseInt(product.laboratory) )[0].name : "",
         "Dimensiones":product.dimens,
         "Peso":product.weight,
         "Cantidad Medida":product.amountSized,

@@ -196,7 +196,7 @@ export default function SignUp(props) {
       let response = await api.getData("getPrestaShopDistributors") 
       let arrayData = []
       console.log(response.data)
-      response.data.forEach( data => arrayData.push({label:data.name,value:data.id}) )
+      response.data.forEach( data => arrayData.push({label:data.name,value:data.prestashopId}) )
       if(mounted){
           setLaboratories(arrayData)
       }     

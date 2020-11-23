@@ -111,6 +111,7 @@ const ProductsTable = props => {
               <TableBody>
                 {products.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map(product => (
                   <TableRow
+                    key={ product._id }
                     className={classes.tableRow}
                     hover
                     key={product.id}
@@ -133,7 +134,7 @@ const ProductsTable = props => {
                       <div className={classes.nameContainer}>
                         <Avatar
                           className={classes.avatar}
-                          src={  process.env.REACT_APP_SERVE_IMAGE + product.picture}
+                          src={  product.picture && process.env.REACT_APP_SERVE_IMAGE + product.picture  ||   product.defaultImageID &&  "https://sfarmadroguerias.com/api/images/products/"+product.prestashopId+"/"+product.defaultImageID+"?ws_key=3DHC3JWXTN9XTG3LYEK7YBDJI5PKDHDX&output_format=JSON" }
                         >
                           {getInitials(product.name)}
                         </Avatar>
@@ -144,8 +145,8 @@ const ProductsTable = props => {
                     <TableCell>{ getMedicamentType(product.medicineType) }</TableCell>              
                     <TableCell>
                       {
-                        props.appState.laboratories.filter( lab =>  lab.id === parseInt(product.laboratory) )[0] ?
-                        props.appState.laboratories.filter( lab =>  lab.id === parseInt(product.laboratory) )[0].name : false  
+                        props.appState.laboratories.filter( lab =>  lab.prestashopId === parseInt(product.laboratory) )[0] ?
+                        props.appState.laboratories.filter( lab =>  lab.prestashopId === parseInt(product.laboratory) )[0].name : false  
                       }
                     </TableCell>
                     <TableCell>{product.state}</TableCell>

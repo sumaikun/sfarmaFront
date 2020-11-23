@@ -222,7 +222,7 @@ const Topbar = props => {
                   <MenuItem onClick={()=>searchNews(data)}>
                     { 
                       appState.laboratories.length > 0 ? 
-                      appState.laboratories[appState.laboratories.findIndex( sdata => sdata.id === parseInt(data) )].name+" " : false
+                      appState.laboratories[appState.laboratories.findIndex( sdata => sdata.id === parseInt(data) )]?.name+" " : false
                     }  
                     <Badge style={{marginLeft:"10px"}} color="secondary" variant="dot">
                       <Typography>{props.productsState.products.filter( 

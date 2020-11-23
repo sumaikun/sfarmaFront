@@ -91,7 +91,7 @@ const FormDetails = props => {
 
       let arrayData = []
 
-      props.laboratories.forEach( data => arrayData.push({label:data.name,value:data.id}) )
+      props.laboratories.forEach( data => arrayData.push({label:data.name,value:data.prestashopId}) )
       setLaboratories(arrayData)
       
       const response = await api.getData("userRoles") 

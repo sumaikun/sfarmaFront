@@ -127,8 +127,8 @@ const UsersTable = props => {
                     </TableCell>
                     <TableCell>
                       {
-                        props.appState.laboratories.filter( lab =>  lab.id === user.laboratory )[0] ?
-                        props.appState.laboratories.filter( lab =>  lab.id === user.laboratory )[0].name : false  
+                        props.appState.laboratories.filter( lab =>  lab.prestashopId === user.laboratory )[0] ?
+                        props.appState.laboratories.filter( lab =>  lab.prestashopId === user.laboratory )[0].name : false  
                       }
                     </TableCell>
                     <TableCell>{user.state}</TableCell>
