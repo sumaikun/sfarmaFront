@@ -74,7 +74,7 @@ const ProductCard = props => {
         <div className={classes.imageContainer}>
         <Avatar
             className={classes.avatar}
-            src={process.env.REACT_APP_SERVE_IMAGE+product.picture}
+            src={product.picture && process.env.REACT_APP_SERVE_IMAGE + product.picture  ||   product.defaultImageID &&  "https://sfarmadroguerias.com/api/images/products/"+product.prestashopId+"/"+product.defaultImageID+"?ws_key=3DHC3JWXTN9XTG3LYEK7YBDJI5PKDHDX&output_format=JSON"}
             variant="rounded"
             onClick={()=>{
               console.log("product clicked")

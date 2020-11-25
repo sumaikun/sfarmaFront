@@ -106,7 +106,8 @@ const FormFile = props => {
           <Avatar
             className={classes.avatar}
             variant="rounded"
-            src={ !values.picture || values.picture.includes('base64') ? values.picture:process.env.REACT_APP_SERVE_IMAGE+values.picture }
+            src={  values.picture && values.picture.includes('base64') && values.picture  || values.picture && process.env.REACT_APP_SERVE_IMAGE+values.picture ||
+            props.productDetails?.defaultImageID &&  "https://sfarmadroguerias.com/api/images/products/"+props.productDetails?.prestashopId+"/"+props.productDetails?.defaultImageID+"?ws_key=3DHC3JWXTN9XTG3LYEK7YBDJI5PKDHDX&output_format=JSON" }
           >
             {getInitials(props.productDetails.name)}
           </Avatar>

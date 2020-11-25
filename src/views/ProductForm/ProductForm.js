@@ -70,7 +70,9 @@ const ProductForm = props => {
     shooperClassification: props.productsState.selectedProduct.shooperClassification ? props.productsState.selectedProduct.shooperClassification : {}, 
     marketSegment: props.productsState.selectedProduct.marketSegment ? props.productsState.selectedProduct.marketSegment : {},
     rejectJutification: props.productsState.selectedProduct.rejectJutification ? props.productsState.selectedProduct.rejectJutification : "",
-    file: null
+    file: null,
+    defaultImageID: props.productsState.selectedProduct.defaultImageID || null,
+    prestashopId: props.productsState.selectedProduct.prestashopId || null
   });
 
   const changeValues = (key,value) =>
