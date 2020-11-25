@@ -145,8 +145,8 @@ const ProductsTable = props => {
                     <TableCell>{ getMedicamentType(product.medicineType) }</TableCell>              
                     <TableCell>
                       {
-                        props.appState.laboratories.filter( lab =>  lab.prestashopId === parseInt(product.laboratory) )[0] ?
-                        props.appState.laboratories.filter( lab =>  lab.prestashopId === parseInt(product.laboratory) )[0].name : false  
+                        props.appState.laboratories.filter( lab =>  lab.prestashopId === product.laboratory )[0] ?
+                        props.appState.laboratories.filter( lab =>  lab.prestashopId === product.laboratory )[0].name : false  
                       }
                     </TableCell>
                     <TableCell>{product.state}</TableCell>

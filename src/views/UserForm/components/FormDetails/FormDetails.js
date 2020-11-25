@@ -91,7 +91,7 @@ const FormDetails = props => {
 
       let arrayData = []
 
-      props.laboratories.forEach( data => arrayData.push({label:data.name,value:data.prestashopId}) )
+      props.laboratories.forEach( data => arrayData.push({label:data.name,value:Number(data.prestashopId)}) )
       setLaboratories(arrayData)
       
       const response = await api.getData("userRoles") 
@@ -125,21 +125,21 @@ const FormDetails = props => {
     switch(key){
       case "name":
 
-        errors[0] = value.length > 0 && value.length < 3 ?
+        errors[0] = value?.length > 0 && value?.length < 3 ?
          "El nombre debe tener mas de tres digitos" : false       
 
         return  errors[0]
 
       case "lastName":
 
-        errors[1] = value.length > 0 && value.length < 3 ?
+        errors[1] = value?.length > 0 && value?.length < 3 ?
          "El apellido debe tener mas de tres digitos" : false  
 
         return  errors[1]
          
       case "email":
 
-        errors[2] = value.length > 0 && ( !value.match(/\S+@\S+\.\S+/) ) ?
+        errors[2] = value?.length > 0 && ( !value?.match(/\S+@\S+\.\S+/) ) ?
           "No es un correo valido":false
         
           return  errors[2]
@@ -147,7 +147,7 @@ const FormDetails = props => {
 
         case "password":
 
-          errors[3] = value.length > 0 && (  !value.match(/^(?=.{8,}$)(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*\W).*$/) )  ?
+          errors[3] = value?.length > 0 && (  !value?.match(/^(?=.{8,}$)(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*\W).*$/) )  ?
           "La contraseña debe tener una mayuscula, una minuscula y tener al menos 8 dígitos":false
         
           return  errors[3]
@@ -155,7 +155,7 @@ const FormDetails = props => {
         case "confirmPassword":      
 
           
-          errors[4] = value.confirmPassword.length > 0 && value.password != value.confirmPassword ?
+          errors[4] = value?.confirmPassword.length > 0 && value?.password != value?.confirmPassword ?
             "Las contraseñas deben coincidir":false         
           
           return  errors[4]

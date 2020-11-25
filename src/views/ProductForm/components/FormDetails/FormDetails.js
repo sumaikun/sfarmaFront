@@ -74,56 +74,56 @@ const FormDetails = props => {
 
       case "name":
 
-        errors[0] = value.length > 0 && value.length < 3 ?
+        errors[0] = value?.length > 0 && value?.length < 3 ?
          "El nombre debe tener mas de tres digitos" : false       
 
         return  errors[0]
 
       case "contraIndications":
 
-        errors[1] = value.length > 0 && value.length < 10 ?
+        errors[1] = value?.length > 0 && value?.length < 10 ?
         "Las contraindicaciones deben tener mas de 10 dígitos":false
 
         return  errors[1]
          
       case "description":
 
-        errors[2] = value.length > 0 && value.length < 10 ?
+        errors[2] = value?.length > 0 && value?.length < 10 ?
           "La descripción debe tener mas de 10 dígitos":false
         
           return  errors[2]
 
       case "administrationWay":
 
-        errors[3] = value.length > 0 && value.length < 5 ?
+        errors[3] = value?.length > 0 && value?.length < 5 ?
           "La forma de administración debe tener mas de 5 dígitos":false
         
           return  errors[3]
 
       case "indications":
 
-        errors[4] = value.length > 0 && value.length < 10 ?
+        errors[4] = value?.length > 0 && value?.length < 10 ?
           "Las indicaciones deben tener mas de 10 dígitos":false
         
           return  errors[4]
 
       case "contraIndications":
 
-        errors[5] = value.length > 0 && value.length < 10 ?
+        errors[5] = value?.length > 0 && value?.length < 10 ?
           "Las contra indicaciones deben tener mas de 10 dígitos":false
         
           return  errors[5]
 
       case "precautions":
 
-        errors[6] = value.length > 0 && value.length < 10 ?
+        errors[6] = value?.length > 0 && value?.length < 10 ?
           "Las precauciones deben tener mas de 10 dígitos":false
         
           return  errors[6]
 
       case "rejectJutification":
 
-        errors[7] = value.length > 0 && value.length < 10 ?
+        errors[7] = value?.length > 0 && value?.length < 10 ?
           "Las precauciones deben tener mas de 10 dígitos":false
         
           return  errors[7]          
@@ -149,14 +149,14 @@ const FormDetails = props => {
 
         let arrayData = []
 
-        props.laboratories.forEach( data => arrayData.push({label:data.name,value:data.prestashopId}) )
+        props.laboratories.forEach( data => arrayData.push({label:data.name,value:Number(data.prestashopId)}) )
         setLaboratories(arrayData)
         
         let response = await api.getData("getPrestaShopProductcategories") 
 
         arrayData = [{label:"",value:""}]
         //console.log(response.data)
-        response.data.forEach( data => arrayData.push({label:data.name,value:data.id}) )
+        response.data.forEach( data => arrayData.push({label:data.name,value:data.prestashopId}) )
 
         if(mounted){      
           setCategories(arrayData)

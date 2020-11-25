@@ -27,7 +27,13 @@ const UserForm = props => {
   const classes = useStyles();
 
 
-  console.log("props user form",props.usersState.selectedUser)
+  console.log("props user form",props.usersState.selectedUser,props)
+
+  if(Object.keys(props.usersState.selectedUser).length === 0 && props.usersState.selectedUser.constructor === Object)
+  {
+    props.history.push("/users")
+    
+  }
 
   const [values, setValues] = useState({
     _id:  props.usersState.selectedUser._id || props.usersState.selectedUser.id,
@@ -70,16 +76,16 @@ const UserForm = props => {
     
     //const user = values;
 
-    const user = { ...values };
+    const user = { ...values, laboratory:Number( values.laboratory ) || null  };
 
-    console.log("user",user)
+    //console.log("user",user)
 
     if(props.usersState.selectedUser.id)
     {
       user._id = props.usersState.selectedUser.id
     }
 
-    if(user.name === "" || user.email === "" ||  user.lastName === "" || user.role === "" || user.laboratory === "" ) 
+    if(user.name === "" || user.email === "" ||  user.lastName === "" || user.role === "" || !user.laboratory ) 
     {
       return Swal.fire({
         icon: 'error',
@@ -104,8 +110,8 @@ const UserForm = props => {
       console.log("send file")
       uploadFileToServer(values.file,(response,err)=>{
         if(response){
-          values.picture = response.data.filename
-          props.saveUser(values,(res,err)=>{
+          user.picture = response.data.filename
+          props.saveUser(user,(res,err)=>{
            
             if(res){
               return Swal.fire({
@@ -127,9 +133,9 @@ const UserForm = props => {
     }
     else{
 
-      console.log("user to save",values);
+      console.log("user to save",user);
 
-      props.saveUser(values,(res,err)=>{       
+      props.saveUser(user,(res,err)=>{       
         
         if(res){
           return Swal.fire({

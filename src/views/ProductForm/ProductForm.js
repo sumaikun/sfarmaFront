@@ -31,6 +31,12 @@ const ProductForm = props => {
 
   console.log("props product form",props.productsState.selectedProduct)
 
+  if(Object.keys(props.productsState.selectedProduct).length === 0 && props.productsState.selectedProduct.constructor === Object)
+  {
+    props.history.push("/products")
+    
+  }
+
   const [values, setValues] = useState({
     _id:  props.productsState.selectedProduct._id || props.productsState.selectedProduct.id,
     name: props.productsState.selectedProduct.name,

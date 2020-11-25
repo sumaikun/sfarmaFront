@@ -1,5 +1,7 @@
 import React from 'react';
 
+import gifS from "../../images/final.gif"
+
 const styles = {
     imageContainer:{
         display: "flex",
@@ -10,12 +12,13 @@ const styles = {
     }
 }
 
+
 const Loading = props => {
 
     return (
         <div>
             <div className="loading" style={ styles.imageContainer } >
-                <img src="http://a.top4top.net/p_1990j031.gif" alt="Loading" />
+                <img src={gifS} alt="Loading" />
                 <span>Cargando.....</span>
             </div>
             <div class="mouse original"></div>
