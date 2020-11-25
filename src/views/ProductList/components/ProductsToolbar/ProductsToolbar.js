@@ -80,7 +80,7 @@ const ProductsToolbar = props => {
         <Button className={classes.importButton}  
           disabled={ props.selectedProduct === null } 
           style={{ display: props.viewMode === "list" ? "block":"none"}}
-          onClick={props.approveButton}>Aprovar</Button>
+          onClick={props.approveButton}>Aprobar</Button>
         
         <Button className={classes.exportButton}
           disabled={ props.selectedProduct === null  } 
