@@ -6,7 +6,7 @@ import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import { ProductsToolbar, ProductCard , ProductsTable } from './components';
 import { connect } from 'react-redux';
-import { useLocation } from "react-router-dom";
+//import { useLocation } from "react-router-dom";
 import Swal from 'sweetalert2'
 import { getProducts , getProduct, deleteProduct, saveProduct } from 'actions/products';
 import { createProductPrestashop } from 'actions/app'
@@ -68,6 +68,8 @@ class ProductList extends Component{
     this.approveButton = this.approveButton.bind(this)
 
     this.resendAprov = this.resendAprov.bind(this)
+
+    this.sendToApprove = this.sendToApprove.bind(this)
 
     this.initializeList = this.initializeList.bind(this)
 
@@ -198,7 +200,7 @@ class ProductList extends Component{
           {
             this.setState({
               ...this.state,
-              products:this.props.productsState.products.filter( data => data.laboratory === this.props.history.location.state.data && data.state != "sended" && data.state != "rejected"   ),
+              products:this.props.productsState.products.filter( data => data.laboratory === this.props.history.location.state.data && ( data.state === "" || data.state === "inShopToApprove" )),
               selectedProduct:null,
               page:0,
               rowsPerPage:6
@@ -490,7 +492,7 @@ class ProductList extends Component{
   }
 
   approveButton(data){
-    console.log("approve Button");
+    console.log("approve Button",data);
 
     if(data.state === "sended")
     {
@@ -518,8 +520,8 @@ class ProductList extends Component{
           confirmButtonColor: '#000076',
           title: 'Información adicional',
           html:
-            '<input id="swal-input1" placeholder="referencia" class="swal2-input">' +
-            '<input id="swal-input2" placeholder="precio" class="swal2-input">',
+            '<input id="swal-input1" value="'+data.shopDefaultReference+'" placeholder="referencia" class="swal2-input">' +
+            '<input id="swal-input2" value="'+data.recommendedPrice+'" placeholder="precio" class="swal2-input">',
           focusConfirm: false,
           preConfirm: () => {
             return [
@@ -628,6 +630,115 @@ class ProductList extends Component{
     })
   }
 
+  sendToApprove(){
+
+    const self = this
+
+    const { selectedProduct } = this.state
+
+    console.log("selectedProduct",selectedProduct)
+
+    if(selectedProduct)
+    { 
+
+      if(selectedProduct.state != "inShop" )
+      {
+        if(!selectedProduct.picture)
+        {
+          return Swal.fire('Espera','El producto debe tener una imagen de portada','warning')
+        }
+      }
+
+      if(selectedProduct.state === "rejected")
+      {
+        Swal.fire('Este producto fue previamente rechazado',
+        'Recuerde realizar los ajustes correspondientes para que sea aprobado',
+        'warning').then( () => 
+            Swal.fire({
+              title: '¿Ya realizo los cambios?',
+              text: "Razon de rechazo: "+selectedProduct.rejectJutification,
+              icon: 'question',
+              showCancelButton: true,
+              confirmButtonColor: '#3085d6',
+              cancelButtonColor: '#d33',
+              confirmButtonText: 'Si, ¡adelante!'
+            }).then((result) => {
+              if (result.value) {
+                  
+                  let data = JSON.parse( JSON.stringify(selectedProduct) )
+
+                  data.state = ''
+
+                  data.rejectJutification = ""
+
+                  self.props.saveProduct(data,(res,err)=>{       
+                
+                    if(res){
+                      
+                      self.initializeList()
+
+                      return Swal.fire({
+                        icon: 'success',
+                        title: 'Bien',
+                        text: "Datos registrados",          
+                      })
+                    }           
+                    
+                  })       
+      
+              }
+        })
+        )
+      }else{
+        if(selectedProduct.state === "sended" || selectedProduct.state === "inShop" || selectedProduct.state === "inShopRejected")
+        {       
+          Swal.fire({
+              title: 'Espera',
+              text: "Estos productos ya se encuentra en la tienda, desea enviar los datos para que se publiquen los cambios ",
+              icon: 'question',
+              showCancelButton: true,
+              confirmButtonColor: '#3085d6',
+              cancelButtonColor: '#d33',
+              confirmButtonText: 'Si, ¡adelante!'
+            }).then((result) => {
+              console.log("result",result)
+              if (result.value) {
+                  
+                  let data = JSON.parse( JSON.stringify(selectedProduct) )
+
+                  data.state = 'inShopToApprove'
+
+                  self.props.saveProduct(data,(res,err)=>{       
+                
+                    if(res){
+                      
+                      self.initializeList()
+
+                      return Swal.fire({
+                        icon: 'success',
+                        title: 'Bien',
+                        text: "Datos registrados",          
+                      })
+                    }           
+                    
+                  }) 
+              }
+           })
+          
+        }
+
+        if(selectedProduct.state === "" || selectedProduct.state === "inShopToApprove"  )
+        {
+          return Swal.fire('Estos productos se encuentran pendientes de aprobación',
+          'Espere  que el admin determine el resultado de estos productos',
+          'warning')
+        }
+
+      }
+    }
+    
+  }
+
   filteredProducts(data){
     //console.log("data",data)
     //return this.props.productsState.products
@@ -727,6 +838,8 @@ class ProductList extends Component{
           viewMode={this.state.viewMode}
           approveButton={this.approveTableButton}
           cancelButton={this.cancelTableButton}
+          sendToApprove={this.sendToApprove}
+          user={this.props.authState.user}
           />
 
         {

@@ -358,7 +358,7 @@ const FormDetails = props => {
                 value={ laboratories.length > 0 ? laboratories[laboratories.findIndex( data => data.value === parseInt(props.productDetails.laboratory) )] :  "" }
                 />              
               </Grid> :
-                false
+              <Grid item md={6} xs={12}></Grid>
             } 
 
             <Grid item md={6} xs={12}>

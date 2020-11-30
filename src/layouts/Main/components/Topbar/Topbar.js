@@ -9,11 +9,10 @@ import NotificationsIcon from '@material-ui/icons/NotificationsOutlined';
 import InputIcon from '@material-ui/icons/Input';
 import logo from "../../../../images/sfarmaLogo.jpg"
 import Swal from 'sweetalert2'
-
-
 import { connect } from "react-redux"
-
 import { logoutUser } from "actions/auth"
+
+import { getProducts } from 'actions/products';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -59,6 +58,10 @@ const Topbar = props => {
   const [notifications, setNotifications] = useState([]);
 
   const [notifications2, setNotifications2] = useState([]);
+
+  useEffect(() => { 
+    props.getProducts()
+  },[])
    
   useEffect(() => { 
 
@@ -71,23 +74,25 @@ const Topbar = props => {
 
       props.productsState.products.forEach( data => {
         
-        console.log("product",data)
+        //console.log("product",data)
 
-        if(!laboratoriesToNotify.includes(data.laboratory) && data.state != "sended" &&  data.state != "rejected")
+        if(!laboratoriesToNotify.includes(data.laboratory) &&  (data.state === "" ||  data.state === "inShopToApprove")  )
         {
           laboratoriesToNotify.push(data.laboratory)  
         }
 
-        if( data.state != "sended" &&  data.state != "rejected" )
+        if( data.state === "" ||  data.state === "inShopToApprove" )
         {
           dataTocheck += 1
         }
 
       })
 
-      setNotifications({ laboratories: laboratoriesToNotify, count: dataTocheck })
+      const adminNotifications = { laboratories: laboratoriesToNotify, count: dataTocheck }
 
+      console.log("adminNotifications",adminNotifications)
 
+      setNotifications(adminNotifications)
 
     }
 
@@ -107,7 +112,7 @@ const Topbar = props => {
 
     }
 
-  },[])
+  },[props.productsState])
 
   const [open, setOpen] = useState(null);
 
@@ -222,11 +227,11 @@ const Topbar = props => {
                   <MenuItem onClick={()=>searchNews(data)}>
                     { 
                       appState.laboratories.length > 0 ? 
-                      appState.laboratories[appState.laboratories.findIndex( sdata => sdata.id === parseInt(data) )]?.name+" " : false
+                      appState.laboratories[appState.laboratories.findIndex( sdata => String(sdata.prestashopId) === String(data) )]?.name+" " : false
                     }  
                     <Badge style={{marginLeft:"10px"}} color="secondary" variant="dot">
                       <Typography>{props.productsState.products.filter( 
-                          product => product.laboratory === data &&  product.state != "sended" &&  product.state != "rejected"
+                          product => product.laboratory === data &&  (product.state === "" || product.state === "inShopToApprove")
                         ).length  }</Typography>
                     </Badge>
                     
@@ -323,6 +328,7 @@ const mapStateToProps = state => {
 const mapDispatchToProps = {
   logoutUser,
   //getUsers,
+  getProducts
  };
 
 export default connect( mapStateToProps , mapDispatchToProps )(Topbar);

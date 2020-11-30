@@ -38,6 +38,8 @@ const useStyles = makeStyles(theme => ({
 const ProductsToolbar = props => {
   const { className, ...rest } = props;
 
+  console.log("toolbar props",props)
+
   const classes = useStyles();
 
   const addFilterText = event => {
@@ -74,18 +76,33 @@ const ProductsToolbar = props => {
 
       <br/><br/>
 
-      <div className={classes.row}>
+      <div className={`${classes.row} menu-toolbar-table`}  >
         <span className={classes.spacer} />
 
-        <Button className={classes.importButton}  
-          disabled={ props.selectedProduct === null } 
-          style={{ display: props.viewMode === "list" ? "block":"none"}}
-          onClick={props.approveButton}>Aprobar</Button>
-        
-        <Button className={classes.exportButton}
-          disabled={ props.selectedProduct === null  } 
-          style={{ display: props.viewMode === "list" ? "block":"none"}}
-          onClick={props.cancelButton}>Rechazar</Button>
+        {
+          props.user.role === "admin" &&           
+          <Button className={classes.importButton}  
+            disabled={ props.selectedProduct === null } 
+            style={{ display: props.viewMode === "list" ? "block":"none"}}
+            onClick={props.approveButton}>Aprobar</Button>
+        }
+
+
+        {
+          props.user.role === "admin" &&   
+          <Button className={classes.exportButton}
+            disabled={ props.selectedProduct === null  } 
+            style={{ display: props.viewMode === "list" ? "block":"none"}}
+            onClick={props.cancelButton}>Rechazar</Button>
+        }
+
+        {
+          props.user.role != "admin" &&           
+          <Button className={classes.importButton}  
+            disabled={ props.selectedProduct === null } 
+            style={{ display: props.viewMode === "list" ? "block":"none"}}
+            onClick={props.sendToApprove}>Mandar para aprobación</Button>
+        }
 
         <Button className={classes.importButton}  
           disabled={ props.selectedProduct === null } 
