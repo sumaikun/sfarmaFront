@@ -217,7 +217,7 @@ const FormDetails = props => {
                 fullWidth
                 helperText={rules("description",props.productDetails.description)}
                 error = {rules("description",props.productDetails.description)}            
-                label="Descripción corta del producto"
+                label="Descripción del producto"
                 margin="dense"
                 name="description"
                 onChange={handleChange}
@@ -227,6 +227,22 @@ const FormDetails = props => {
                 disabled={location.state.mode === "readOnly"}                
               />
               <span style={{display:"absolute", fontSize:"10px", height:"0px"}} >Especifique en una frase el tipo de producto y mencione sus componentes</span>
+            </Grid>
+            <Grid item md={6} xs={12}>
+              <TextField
+                fullWidth
+                helperText={rules("description",props.productDetails.descriptionShort)}
+                error = {rules("description",props.productDetails.descriptionShort)}            
+                label="Descripción corta del producto o info extra"
+                margin="dense"
+                name="descriptionShort"
+                onChange={handleChange}
+                required
+                value={props.productDetails.descriptionShort}
+                variant="outlined"
+                disabled={location.state.mode === "readOnly"}                
+              />
+              <span style={{display:"absolute", fontSize:"10px", height:"0px"}} >Puede poner contraindicaciones o indicaciones generales</span>
             </Grid>
             <Grid item md={6} xs={12}>
               <TextField
@@ -417,6 +433,34 @@ const FormDetails = props => {
                 disabled={location.state.mode === "readOnly"}            
               />
               <span style={{display:"absolute", fontSize:"10px", height:"0px"}} >Ml, Mg, g, etc.</span>
+            </Grid>
+
+            <Grid item md={6} xs={12}>
+              <TextField
+                fullWidth
+                label="Anchura:"
+                margin="dense"
+                name="width"
+                onChange={handleChange}
+                required
+                value={props.productDetails.width}
+                variant="outlined"  
+                disabled={location.state.mode === "readOnly"}              
+              />
+            </Grid>
+
+            <Grid item md={6} xs={12}>
+              <TextField
+                fullWidth
+                label="Altura:"
+                margin="dense"
+                name="height"
+                onChange={handleChange}
+                required
+                value={props.productDetails.height}
+                variant="outlined"  
+                disabled={location.state.mode === "readOnly"}              
+              />
             </Grid>
 
             <Grid item md={6} xs={12}>
@@ -641,7 +685,17 @@ const FormDetails = props => {
               />
             </Grid>
 
-            <Grid item md={6} xs={12}></Grid>
+            <Grid item md={6} xs={12}>
+              <TextField
+                fullWidth
+                label="Clasificación de Unidad:"
+                margin="dense"
+                name="unity"
+                onChange={handleChange}
+                value={props.productDetails.unity}
+                variant="outlined"
+                disabled={location.state.mode === "readOnly"} />
+            </Grid>
 
             <Divider />  
 
@@ -698,6 +752,60 @@ const FormDetails = props => {
                     changeValuesWithProperty={props.changeValuesWithProperty}
                     productDetails={props.productDetails}  
                     />           
+                </ExpansionPanelDetails>
+              </ExpansionPanel>
+            </Grid>
+
+            <Grid item md={6} xs={12}>
+              <ExpansionPanel>
+                <ExpansionPanelSummary
+                  expandIcon={<ExpandMoreIcon />}
+                  aria-controls="panel1a-content"
+                  id="panel1a-header"
+                >
+                  <Typography className={classes.heading}>Meta datos para seo</Typography>
+                </ExpansionPanelSummary>
+                <ExpansionPanelDetails>
+
+                  <Grid  container>
+                    
+                    <Grid md={12} xs={12} item>
+                      <TextField
+                        fullWidth
+                        label="Meta title:"
+                        margin="dense"
+                        name="metaTitle"
+                        onChange={handleChange}
+                        value={props.productDetails.metaTitle}
+                        variant="outlined"
+                        disabled={location.state.mode === "readOnly"} />
+                    </Grid>
+
+                    <Grid md={12} xs={12} item>
+                      <TextField
+                        fullWidth
+                        label="Meta description:"
+                        margin="dense"
+                        name="metaDescription"
+                        onChange={handleChange}
+                        value={props.productDetails.metaDescription}
+                        variant="outlined"
+                        disabled={location.state.mode === "readOnly"} />
+                    </Grid>
+
+                    <Grid md={12} xs={12} item>
+                      <TextField
+                        fullWidth
+                        label="Meta keywords:"
+                        margin="dense"
+                        name="metaKeywords"
+                        onChange={handleChange}
+                        value={props.productDetails.metaKeywords}
+                        variant="outlined"
+                        disabled={location.state.mode === "readOnly"} />
+                    </Grid>          
+                  </Grid>  
+
                 </ExpansionPanelDetails>
               </ExpansionPanel>
             </Grid>

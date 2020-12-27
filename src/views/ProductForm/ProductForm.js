@@ -72,7 +72,14 @@ const ProductForm = props => {
     rejectJutification: props.productsState.selectedProduct.rejectJutification ? props.productsState.selectedProduct.rejectJutification : "",
     file: null,
     defaultImageID: props.productsState.selectedProduct.defaultImageID || null,
-    prestashopId: props.productsState.selectedProduct.prestashopId || null
+    prestashopId: props.productsState.selectedProduct.prestashopId || null,
+    unity: props.productsState.selectedProduct.unity,
+    metaTitle: props.productsState.selectedProduct.metaTitle,
+    metaDescription: props.productsState.selectedProduct.metaDescription,
+    metaKeywords: props.productsState.selectedProduct.metaKeywords,
+    width: props.productsState.selectedProduct.width,
+    height: props.productsState.selectedProduct.height,
+    descriptionShort: props.productsState.selectedProduct.descriptionShort
   });
 
   const changeValues = (key,value) =>
