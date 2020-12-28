@@ -254,6 +254,7 @@ const FormDetails = props => {
                 required
                 value={props.productDetails.externalBoxDesc}
                 variant="outlined"
+                type="number"
                 disabled={location.state.mode === "readOnly"}
               />
             </Grid>  
